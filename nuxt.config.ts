@@ -7,6 +7,15 @@ export default defineNuxtConfig({
     head: {
       link: [
         {
+          rel: 'icon',
+          type: 'image/png',
+          href: '/favicon.ico',
+        },
+        {
+          rel: 'apple-touch-icon',
+          href: '/favicon.ico',
+        },
+        {
           rel: 'stylesheet',
           href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
         },
@@ -17,7 +26,12 @@ export default defineNuxtConfig({
     // Запрещает Nitro бандлить или изолировать Prisma-клиент как Edge-код
     externals: {
       inline: [],
-      external: ['@prisma/client', '#prisma']
+      external: [
+        '@prisma/client',
+        '@prisma/adapter-mariadb',
+        'mariadb',
+        '#prisma',
+      ],
     }
   },
   devServer: {

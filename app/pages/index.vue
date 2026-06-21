@@ -17,15 +17,92 @@
       </div>
       <div class="license-container">
         <div class="license-box">
-          <NuxtImg
-            src="images/license.jpg"
-            alt="Лицензия ЛенЭТЛ" />
+          <button
+            type="button"
+            class="license-preview-trigger"
+            aria-label="Открыть предпросмотр лицензии"
+            @click="openLicensePreview">
+            <NuxtImg
+              src="images/license.jpg"
+              alt="Лицензия ЛенЭТЛ" />
+            <span class="license-preview-trigger__hint" aria-hidden="true">
+              <i class="fas fa-search-plus"></i>
+            </span>
+          </button>
           <div class="license-caption">Лицензия № 06-68/ЭЛ-25</div>
         </div>
       </div>
     </div>
   </section>
+
+  <Teleport to="body">
+    <Transition name="license-preview">
+      <div
+        v-if="isLicensePreviewOpen"
+        class="license-preview"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Предпросмотр лицензии"
+        @click.self="closeLicensePreview">
+        <button
+          type="button"
+          class="license-preview__close"
+          aria-label="Закрыть предпросмотр"
+          @click="closeLicensePreview">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="license-preview__content">
+          <NuxtImg
+            src="images/license.jpg"
+            alt="Лицензия ЛенЭТЛ" />
+          <p class="license-preview__caption">Лицензия № 06-68/ЭЛ-25</p>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
+
+<script lang="ts" setup>
+const isLicensePreviewOpen = ref(false);
+
+let escapeHandler: ((event: KeyboardEvent) => void) | null = null;
+
+const openLicensePreview = () => {
+  isLicensePreviewOpen.value = true;
+};
+
+const closeLicensePreview = () => {
+  isLicensePreviewOpen.value = false;
+};
+
+watch(isLicensePreviewOpen, (open) => {
+  if (!import.meta.client) return;
+
+  document.body.style.overflow = open ? 'hidden' : '';
+
+  if (open) {
+    escapeHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeLicensePreview();
+    };
+    document.addEventListener('keydown', escapeHandler);
+    return;
+  }
+
+  if (escapeHandler) {
+    document.removeEventListener('keydown', escapeHandler);
+    escapeHandler = null;
+  }
+});
+
+onUnmounted(() => {
+  if (!import.meta.client) return;
+
+  document.body.style.overflow = '';
+  if (escapeHandler) {
+    document.removeEventListener('keydown', escapeHandler);
+  }
+});
+</script>
 
 <style lang="scss" scoped>
 .hero {
@@ -84,17 +161,140 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(100, 181, 246, 0.3);
   transition: all 0.4s ease;
-  cursor: pointer;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 35px rgba(100, 181, 246, 0.3);
     border-color: rgba(100, 181, 246, 0.6);
   }
+}
+
+.license-preview-trigger {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
 
   img {
     width: 100%;
     display: block;
+  }
+
+  &__hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13, 20, 70, 0.55);
+    color: #e3f2fd;
+    font-size: 2rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover &__hint,
+  &:focus-visible &__hint {
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #64b5f6;
+    outline-offset: -2px;
+  }
+}
+
+.license-preview-enter-active,
+.license-preview-leave-active {
+  transition: opacity 0.25s ease;
+
+  .license-preview__content {
+    transition: transform 0.25s ease;
+  }
+}
+
+.license-preview-enter-from,
+.license-preview-leave-to {
+  opacity: 0;
+
+  .license-preview__content {
+    transform: scale(0.95);
+  }
+}
+
+.license-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(5, 10, 40, 0.55);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+
+  &__close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    background: rgba(40, 40, 60, 0.25);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    color: #e3f2fd;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.3),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: rgba(100, 181, 246, 0.5);
+      background: rgba(25, 118, 210, 0.25);
+    }
+  }
+
+  &__content {
+    max-width: min(900px, 100%);
+    max-height: calc(100vh - 48px);
+    overflow: auto;
+    border-radius: 16px;
+    background: rgba(40, 40, 60, 0.22);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+      0 24px 64px rgba(0, 0, 0, 0.45),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(100, 181, 246, 0.12) 0%, transparent 55%),
+      radial-gradient(circle at 80% 100%, rgba(100, 140, 255, 0.08) 0%, transparent 60%);
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  &__caption {
+    margin: 0;
+    padding: 16px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #e3f2fd;
+    background: rgba(25, 118, 210, 0.12);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 }
 
