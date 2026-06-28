@@ -116,7 +116,22 @@ else
 fi
 
 echo "==> миграции Prisma"
-npm run db:deploy
+set +e
+MIGRATE_OUTPUT="$(npm run db:deploy 2>&1)"
+MIGRATE_EXIT=$?
+set -e
+echo "$MIGRATE_OUTPUT"
+
+if [[ $MIGRATE_EXIT -ne 0 ]]; then
+  if echo "$MIGRATE_OUTPUT" | grep -q "P3005"; then
+    echo "==> P3005: БД уже существует без истории миграций."
+    echo "==> Один раз выполните baseline (см. инструкцию), затем migrate deploy будет работать."
+    echo "==> Продолжаем деплой без миграций."
+  else
+    echo "Ошибка: migrate deploy завершился с кодом $MIGRATE_EXIT"
+    exit 1
+  fi
+fi
 
 echo "==> перезапуск PM2"
 if pm2 describe "$PM2_APP_NAME" >/dev/null 2>&1; then
