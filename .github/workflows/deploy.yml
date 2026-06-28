@@ -26,4 +26,8 @@ jobs:
           command_timeout: 30m
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
+            git fetch origin master
+            git checkout master 2>/dev/null || git checkout -b master
+            git reset --hard origin/master
+            chmod +x scripts/deploy.sh
             bash scripts/deploy.sh
