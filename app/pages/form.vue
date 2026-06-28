@@ -1,106 +1,154 @@
 <template>
-  <section class="form-header">
-    <h1>Оставьте заявку и мы свяжемся с вами</h1>
-    <p>Заявки рассматриваются в течение рабочего дня</p>
-  </section>
+  <PageHeader title="Оставьте заявку и мы свяжемся с вами">
+    Заявки рассматриваются в течение рабочего дня
+  </PageHeader>
 
-  <form class="form">
-    <label class="form__label">
-      <span>Как к вам обращаться *</span>
-      <input
-        v-model="formData.name"
-        class="form__input"
-        type="text"
-        placeholder="Имя, фамилия" />
-      <span v-if="errors.name" class="form__error-text">{{ errors.name }}</span>
-    </label>
-
-    <label class="form__label">
-      <span>Ваш телефон *</span>
-      <input
-        v-model="formData.phone"
-        class="form__input"
-        type="tel"
-        placeholder="+7 (___) ___-__-__" />
-      <span v-if="errors.phone" class="form__error-text">{{ errors.phone }}</span>
-    </label>
-
-    <label class="form__label">
-      <span>Ваш e-mail *</span>
-      <input
-        v-model="formData.email"
-        class="form__input"
-        type="email"
-        placeholder="example@mail.ru" />
-      <span v-if="errors.email" class="form__error-text">{{ errors.email }}</span>
-    </label>
-
-    <label class="form__label">
-      <span>Сообщение или вопрос *</span>
-      <textarea
-        v-model="formData.message"
-        class="form__input"
-        rows="5"
-        placeholder="Опишите ваш вопрос..."></textarea>
-      <span v-if="errors.message" class="form__error-text">{{ errors.message }}</span>
-    </label>
-
-    <!-- Красивое поле для файлов -->
-    <div class="form__file-wrapper">
-      <label class="form__file-label">
+  <form
+    class="form"
+    :class="{ 'form--submitting': isSubmitting }">
+    <div
+      class="form__body"
+      :aria-busy="isSubmitting">
+      <label class="form__label">
+        <span>Как к вам обращаться *</span>
         <input
-          type="file"
-          class="form__file-input"
-          multiple
-          @change="handleFileChange" />
-        <div class="form__file-content">
-          <i class="fas fa-cloud-upload-alt"></i>
-          <span>Приложить файлы</span>
-          <span class="form__file-hint">(jpg, png, pdf, doc — {{ MAX_FILES_HINT }})</span>
-        </div>
+          v-model="formData.name"
+          class="form__input"
+          :class="{ 'form__input--error': errors.name }"
+          type="text"
+          placeholder="Имя, фамилия"
+          :disabled="isSubmitting"
+          @input="errors.name = ''" />
+        <span v-if="errors.name" class="form__error-text">{{ errors.name }}</span>
       </label>
-      <span v-if="errors.files" class="form__error-text form__error-text--files">{{ errors.files }}</span>
-      <div
-        v-if="files.length > 0"
-        class="form__file-list">
+
+      <label class="form__label">
+        <span>Ваш телефон *</span>
+        <input
+          :value="formData.phone"
+          class="form__input"
+          :class="{ 'form__input--error': errors.phone }"
+          type="tel"
+          inputmode="tel"
+          autocomplete="tel"
+          placeholder="+7 (___) ___-__-__"
+          :disabled="isSubmitting"
+          @input="onPhoneInput" />
+        <span v-if="errors.phone" class="form__error-text">{{ errors.phone }}</span>
+      </label>
+
+      <label class="form__label">
+        <span>Ваш e-mail *</span>
+        <input
+          v-model="formData.email"
+          class="form__input"
+          :class="{ 'form__input--error': errors.email }"
+          type="email"
+          placeholder="example@mail.ru"
+          :disabled="isSubmitting"
+          @input="errors.email = ''" />
+        <span v-if="errors.email" class="form__error-text">{{ errors.email }}</span>
+      </label>
+
+      <label class="form__label">
+        <span>Сообщение или вопрос *</span>
+        <textarea
+          v-model="formData.message"
+          class="form__input"
+          :class="{ 'form__input--error': errors.message }"
+          rows="5"
+          placeholder="Опишите ваш вопрос..."
+          :disabled="isSubmitting"
+          @input="errors.message = ''"></textarea>
+        <span v-if="errors.message" class="form__error-text">{{ errors.message }}</span>
+      </label>
+
+      <!-- Красивое поле для файлов -->
+      <div class="form__file-wrapper">
+        <label
+          class="form__file-label"
+          :class="{
+            'form__file-label--disabled': isSubmitting,
+            'form__file-label--error': errors.files,
+          }">
+          <input
+            type="file"
+            class="form__file-input"
+            multiple
+            :accept="ALLOWED_FILE_ACCEPT"
+            :disabled="isSubmitting"
+            @change="handleFileChange" />
+          <div
+            class="form__file-content"
+            :class="{
+              'form__file-content--error': errors.files,
+              'form__file-content--drag-over': isDragOver && !isDragInvalid,
+              'form__file-content--drag-invalid': isDragOver && isDragInvalid,
+            }"
+            @dragenter.prevent="onDragEnter"
+            @dragover.prevent="onDragOver"
+            @dragleave="onDragLeave"
+            @drop.prevent="onDrop">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>Приложить файлы</span>
+            <span class="form__file-hint">({{ ALLOWED_FILE_TYPES_HINT }} — {{ MAX_FILES_HINT }})</span>
+          </div>
+        </label>
+        <span v-if="errors.files" class="form__error-text form__error-text--files">{{ errors.files }}</span>
         <div
-          v-for="(file, index) in files"
-          :key="index"
-          class="form__file-item">
-          <i class="fas fa-file"></i>
-          <span>{{ file.name }}</span>
-          <button
-            type="button"
-            class="form__file-remove"
-            @click="removeFile(index)">
-            <i class="fas fa-times"></i>
-          </button>
+          v-if="files.length > 0"
+          class="form__file-list">
+          <div
+            v-for="(file, index) in files"
+            :key="index"
+            class="form__file-item">
+            <i class="fas fa-file"></i>
+            <span>{{ file.name }}</span>
+            <button
+              type="button"
+              class="form__file-remove"
+              :disabled="isSubmitting"
+              @click="removeFile(index)">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <label class="form__label form__label--checkbox">
-      <input
-        v-model="formData.consent"
-        type="checkbox"
-        class="form__checkbox" />
-      <span class="form__checkbox-text">
-        Я согласен на обработку персональных данных *
-      </span>
-    </label>
-    <span v-if="errors.consent" class="form__error-text form__error-text--checkbox">{{ errors.consent }}</span>
+      <label
+        class="form__label form__label--checkbox"
+        :class="{ 'form__label--error': errors.consent }">
+        <input
+          v-model="formData.consent"
+          type="checkbox"
+          class="form__checkbox"
+          :class="{ 'form__checkbox--error': errors.consent }"
+          :disabled="isSubmitting"
+          @change="errors.consent = ''" />
+        <span class="form__checkbox-text">
+          Я согласен на обработку персональных данных *
+        </span>
+      </label>
+      <span v-if="errors.consent" class="form__error-text form__error-text--checkbox">{{ errors.consent }}</span>
 
-    <button
-      type="button"
-      class="form__submit"
-      :disabled="isSubmitting"
-      @click="handleSubmit">
-      <span v-if="!isSubmitting">Отправить заявку</span>
-      <span v-else>Отправка...</span>
-    </button>
+      <button
+        type="button"
+        class="form__submit"
+        :disabled="isSubmitting"
+        @click="handleSubmit">
+        <span v-if="!isSubmitting">Отправить заявку</span>
+        <span
+          v-else
+          class="form__submit-loading">
+          <i class="fas fa-spinner fa-spin"></i>
+          Отправка...
+        </span>
+      </button>
 
-    <div v-if="successMessage" class="form__success-message">
-      {{ successMessage }}
+      <div
+        v-if="isSubmitting"
+        class="form__overlay"
+        aria-hidden="true" />
     </div>
 
     <div v-if="errorMessage" class="form__error-message">
@@ -110,9 +158,11 @@
 </template>
 
 <script lang="ts" setup>
+const { showToast } = useToast();
 const files = ref<File[]>([]);
 const isSubmitting = ref(false);
-const successMessage = ref('');
+const isDragOver = ref(false);
+const isDragInvalid = ref(false);
 const errorMessage = ref('');
 
 const formData = reactive({
@@ -175,15 +225,13 @@ const validateForm = () => {
     errors.phone = 'Пожалуйста, укажите номер телефона';
     isValid = false;
   } else if (!isValidPhone(formData.phone)) {
-    errors.phone = 'Укажите номер в формате +7 (999) 123-45-67';
+    errors.phone = PHONE_MASK_ERROR;
     isValid = false;
   }
 
-  if (!formData.email.trim()) {
-    errors.email = 'Пожалуйста, укажите email';
-    isValid = false;
-  } else if (!isValidEmail(formData.email)) {
-    errors.email = 'Пожалуйста, укажите корректный email';
+  const emailError = getEmailValidationError(formData.email);
+  if (emailError) {
+    errors.email = emailError;
     isValid = false;
   }
 
@@ -200,14 +248,60 @@ const validateForm = () => {
   return isValid;
 };
 
-const handleFileChange = (event: Event) => {
+const onPhoneInput = (event: Event) => {
+  errors.phone = '';
   const target = event.target as HTMLInputElement;
-  const selectedFiles = Array.from(target.files || []);
-  const { files: nextFiles, error } = mergeFormFiles(files.value, selectedFiles);
+  formData.phone = formatPhoneMask(target.value);
+};
 
+const addFiles = (incoming: File[]) => {
+  const { files: nextFiles, error } = mergeFormFiles(files.value, incoming);
   files.value = nextFiles;
   errors.files = error ?? '';
+};
+
+const handleFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  addFiles(Array.from(target.files || []));
   target.value = '';
+};
+
+const onDragEnter = (event: DragEvent) => {
+  if (isSubmitting.value || !event.dataTransfer?.types.includes('Files')) return;
+  isDragOver.value = true;
+  updateDragValidity(event);
+};
+
+const onDragOver = (event: DragEvent) => {
+  if (isSubmitting.value || !event.dataTransfer?.types.includes('Files')) return;
+  isDragOver.value = true;
+  updateDragValidity(event);
+};
+
+const onDragLeave = (event: DragEvent) => {
+  const currentTarget = event.currentTarget as HTMLElement;
+  const relatedTarget = event.relatedTarget as Node | null;
+  if (relatedTarget && currentTarget.contains(relatedTarget)) return;
+
+  isDragOver.value = false;
+  isDragInvalid.value = false;
+};
+
+const onDrop = (event: DragEvent) => {
+  isDragOver.value = false;
+  isDragInvalid.value = false;
+
+  if (isSubmitting.value) return;
+
+  const droppedFiles = Array.from(event.dataTransfer?.files ?? []);
+  if (!droppedFiles.length) return;
+
+  addFiles(droppedFiles);
+};
+
+const updateDragValidity = (event: DragEvent) => {
+  const allowed = isDragEventAllowed(event);
+  isDragInvalid.value = allowed === false;
 };
 
 const removeFile = (index: number) => {
@@ -216,7 +310,6 @@ const removeFile = (index: number) => {
 };
 
 const handleSubmit = async () => {
-  successMessage.value = '';
   errorMessage.value = '';
 
   if (!validateForm()) {
@@ -243,17 +336,16 @@ const handleSubmit = async () => {
       body: formDataToSend,
     });
     if (result.success) {
-      successMessage.value = result.message || 'Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.';
+      showToast(
+        result.message || 'Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.',
+        'success',
+      );
       formData.name = '';
       formData.phone = '';
       formData.email = '';
       formData.message = '';
       formData.consent = false;
       files.value = [];
-
-      setTimeout(() => {
-        successMessage.value = '';
-      }, 5000);
     } else {
       errorMessage.value = result.message || 'Произошла ошибка при отправке';
     }
@@ -267,43 +359,53 @@ const handleSubmit = async () => {
 </script>
 
 <style lang="scss" scoped>
-.form-header {
-  text-align: center;
-  margin-bottom: 50px;
-
-  h1 {
-    font-size: 2.8rem;
-    margin-bottom: 20px;
-    text-shadow: 0 0 20px rgba(100, 181, 246, 0.7);
-    background: linear-gradient(to right, #e3f2fd, #bbdefb);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-
-    @media (max-width: 768px) {
-      font-size: 2.2rem;
-    }
-  }
-
-  p {
-    font-size: 1.2rem;
-    max-width: 800px;
-    margin: 0 auto 30px;
-    color: #e3f2fd;
-    line-height: 1.6;
-
-    @media (max-width: 480px) {
-      font-size: 1rem;
-    }
-  }
-}
-
 .form {
   max-width: 600px;
   margin: 3rem auto;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  &__body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &--submitting {
+    .form__input:disabled,
+    .form__checkbox:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .form__label--checkbox {
+      cursor: not-allowed;
+    }
+
+    .form__checkbox-text {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: 12px;
+    background: rgba(13, 20, 70, 0.25);
+    backdrop-filter: blur(1px);
+    cursor: wait;
+  }
+
+  &__submit-loading {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
 
   &__label {
     display: flex;
@@ -337,6 +439,15 @@ const handleSubmit = async () => {
         border: none;
       }
     }
+
+    &--error {
+      .form__checkbox-text {
+        color: #ffcdd2;
+        text-decoration: underline;
+        text-decoration-color: #ff8a80;
+        text-underline-offset: 3px;
+      }
+    }
   }
 
   &__input {
@@ -356,6 +467,27 @@ const handleSubmit = async () => {
     &:hover {
       border-color: rgba(100, 181, 246, 0.5);
     }
+
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      background: rgba(13, 20, 70, 0.45);
+    }
+
+    &--error {
+      border-color: #ff8a80;
+      box-shadow:
+        0 0 0 1px rgba(255, 138, 128, 0.5),
+        0 0 12px rgba(255, 82, 82, 0.35);
+
+      &:hover,
+      &:focus {
+        border-color: #ffab91;
+        box-shadow:
+          0 0 0 1px rgba(255, 171, 145, 0.6),
+          0 0 12px rgba(255, 82, 82, 0.4);
+      }
+    }
   }
 
   textarea.form__input {
@@ -372,6 +504,12 @@ const handleSubmit = async () => {
   &__file-label {
     cursor: pointer;
     display: block;
+
+    &--disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
   }
 
   &__file-input {
@@ -408,6 +546,24 @@ const handleSubmit = async () => {
       border-color: #64b5f6;
       background: rgba(13, 20, 70, 0.6);
       transform: translateY(-2px);
+    }
+
+    &--error {
+      border-color: #ff8a80;
+      box-shadow:
+        0 0 0 1px rgba(255, 138, 128, 0.5),
+        0 0 12px rgba(255, 82, 82, 0.3);
+    }
+
+    &--drag-over {
+      border-color: #64b5f6;
+      background: rgba(13, 20, 70, 0.6);
+      transform: translateY(-2px);
+    }
+
+    &--drag-invalid {
+      border-color: rgba(239, 83, 80, 0.65);
+      background: rgba(239, 83, 80, 0.08);
     }
   }
 
@@ -478,6 +634,12 @@ const handleSubmit = async () => {
       background: rgba(255, 107, 107, 0.1);
     }
 
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
     i {
       font-size: 0.8rem;
     }
@@ -520,6 +682,13 @@ const handleSubmit = async () => {
     &:focus {
       outline: none;
       box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.3);
+    }
+
+    &--error {
+      border-color: #ff8a80;
+      box-shadow:
+        0 0 0 2px rgba(255, 138, 128, 0.45),
+        0 0 10px rgba(255, 82, 82, 0.35);
     }
   }
 
@@ -581,35 +750,58 @@ const handleSubmit = async () => {
   }
 
   &__error-text {
-    font-size: 0.75rem;
-    color: red;
-    margin-top: -0.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.15rem;
     margin-left: 0.25rem;
+    padding: 0.45rem 0.65rem;
+    border-radius: 8px;
+    background: rgba(183, 28, 28, 0.45);
+    border: 1px solid rgba(255, 138, 128, 0.75);
+    color: #fff5f5;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.35;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+
+    &::before {
+      content: '!';
+      flex-shrink: 0;
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 50%;
+      background: #ff5252;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      line-height: 1.1rem;
+      text-align: center;
+      text-shadow: none;
+    }
 
     &--checkbox {
-      margin-top: -0.5rem;
-      margin-left: 1.75rem;
+      margin-top: -0.35rem;
+      margin-left: 0;
+    }
+
+    &--files {
+      margin-left: 0;
     }
   }
 
-  &__success-message {
-    padding: 0.75rem;
-    background: rgba(100, 181, 246, 0.2);
-    border: 1px solid #64b5f6;
-    border-radius: 12px;
-    color: #64b5f6;
-    font-size: 0.9rem;
-    text-align: center;
-  }
-
   &__error-message {
-    padding: 0.75rem;
-    background: rgba(255, 107, 107, 0.2);
-    border: 1px solid red;
+    padding: 0.85rem 1rem;
+    background: rgba(183, 28, 28, 0.5);
+    border: 1px solid rgba(255, 138, 128, 0.85);
     border-radius: 12px;
-    color: red;
-    font-size: 0.9rem;
+    color: #fff5f5;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.4;
     text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 4px 16px rgba(183, 28, 28, 0.25);
   }
 }
 </style>

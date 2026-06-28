@@ -1,11 +1,8 @@
 <template>
-  <section class="contacts-header">
-    <h1>Наши контакты</h1>
-    <p>
-      Свяжитесь с нами любым удобным способом. Мы всегда готовы ответить на ваши вопросы и обсудить
-      сотрудничество.
-    </p>
-  </section>
+  <PageHeader title="Наши контакты">
+    Свяжитесь с нами любым удобным способом. Мы всегда готовы ответить на ваши вопросы и обсудить
+    сотрудничество.
+  </PageHeader>
 
   <div class="contacts-container">
     <div class="contact-info">
@@ -108,27 +105,6 @@
 </template>
 
 <style lang="scss" scoped>
-.contacts-header {
-  h1 {
-    font-size: 2.8rem;
-    margin-bottom: 20px;
-    text-shadow: 0 0 20px rgba(100, 181, 246, 0.7);
-    background: linear-gradient(to right, #e3f2fd, #bbdefb);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-align: center;
-  }
-
-  p {
-    font-size: 1.2rem;
-    max-width: 800px;
-    margin: 0 auto 30px;
-    color: #e3f2fd;
-    line-height: 1.6;
-  }
-}
-
 .contacts-container {
   gap: 40px;
   margin-bottom: 60px;

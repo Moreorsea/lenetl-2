@@ -43,6 +43,10 @@
   margin: 0 auto;
   padding: 20px;
   z-index: 3;
+
+  @media (max-width: 768px) {
+    padding: 12px 16px 20px;
+  }
 }
 
 .circuits {

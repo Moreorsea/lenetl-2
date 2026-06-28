@@ -1,12 +1,9 @@
 <template>
-  <section class="services-header">
-    <h1>Наши услуги и цены</h1>
-    <p>
-      ЛенЭТЛ предоставляет полный комплекс услуг по испытаниям и измерениям электроустановок и
-      средств защиты до 10 кВ. Наши цены конкурентоспособны, а качество работ соответствует всем
-      нормативным требованиям.
-    </p>
-  </section>
+  <PageHeader title="Наши услуги и цены">
+    ЛенЭТЛ предоставляет полный комплекс услуг по испытаниям и измерениям электроустановок и
+    средств защиты до 10 кВ. Наши цены конкурентоспособны, а качество работ соответствует всем
+    нормативным требованиям.
+  </PageHeader>
 
   <section class="services-container">
     <!-- Таблица 1: Испытания средств защиты -->
@@ -17,6 +14,7 @@
         <i class="fas fa-shield-alt"></i>
         <h2>Испытания средств защиты</h2>
       </div>
+      <div class="service-section__table-wrap">
       <table class="services-table">
         <thead>
           <tr>
@@ -83,6 +81,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
       <br />
       По согласованию возможны срочные испытания, а также забор и доставка СИЗ с Вашего объекта.
       Подробности уточняйте у менеджера.
@@ -96,6 +95,7 @@
         <i class="fas fa-plug"></i>
         <h2>Испытания электроустановок до 1000 В</h2>
       </div>
+      <div class="service-section__table-wrap">
       <table class="services-table">
         <thead>
           <tr>
@@ -124,6 +124,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
 
     <!-- Таблица 3: Испытания электроустановок выше 1000 В -->
@@ -132,6 +133,7 @@
         <i class="fas fa-bolt"></i>
         <h2>Испытания электроустановок выше 1000 В</h2>
       </div>
+      <div class="service-section__table-wrap">
       <table class="services-table">
         <thead>
           <tr>
@@ -158,48 +160,12 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
-.services-header {
-  text-align: center;
-  margin-bottom: 50px;
-
-  h1 {
-    font-size: 2.8rem;
-    margin-bottom: 20px;
-    text-shadow: 0 0 20px rgba(100, 181, 246, 0.7);
-    background: linear-gradient(to right, #e3f2fd, #bbdefb);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-
-    @media (max-width: 768px) {
-      font-size: 2rem;
-    }
-
-    @media (max-width: 480px) {
-      font-size: 1.6rem;
-    }
-  }
-
-  p {
-    font-size: 1.2rem;
-    max-width: 800px;
-    margin: 0 auto 30px;
-    color: #e3f2fd;
-    line-height: 1.6;
-    text-shadow: 0 0 10px rgba(100, 181, 246, 0.5);
-
-    @media (max-width: 768px) {
-      font-size: 1rem;
-      padding: 0 20px;
-    }
-  }
-}
-
 .services-container {
   display: flex;
   flex-direction: column;
@@ -214,7 +180,7 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(100, 181, 246, 0.3);
   position: relative;
-  overflow-x: auto; // Важно для горизонтальной прокрутки таблицы
+  overflow: hidden;
 
   @media (max-width: 768px) {
     padding: 20px;
@@ -229,9 +195,16 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    right: 0;
     height: 5px;
+    border-radius: 15px 15px 0 0;
     background: linear-gradient(90deg, #0d47a1, #1976d2);
+    pointer-events: none;
+  }
+
+  &__table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -279,7 +252,7 @@
   min-width: 500px; // Минимальная ширина для планшетов
 
   @media (max-width: 768px) {
-    min-width: 400px;
+    min-width: 520px;
   }
 
   th {
@@ -288,6 +261,13 @@
     text-align: left;
     font-weight: 600;
     border-bottom: 2px solid rgba(100, 181, 246, 0.5);
+
+    &:last-child {
+      width: 1%;
+      min-width: max-content;
+      white-space: nowrap;
+      text-align: right;
+    }
 
     @media (max-width: 768px) {
       padding: 10px;
@@ -303,6 +283,7 @@
   td {
     padding: 15px;
     border-bottom: 1px solid rgba(100, 181, 246, 0.2);
+    vertical-align: top;
 
     @media (max-width: 768px) {
       padding: 10px;
@@ -327,12 +308,11 @@
 }
 
 .price {
+  width: 1%;
+  min-width: max-content;
   color: #ffd54f;
   font-weight: 600;
   white-space: nowrap;
-
-  @media (max-width: 480px) {
-    white-space: normal; // Разрешаем перенос на мобильных
-  }
+  text-align: right;
 }
 </style>

@@ -1,11 +1,14 @@
 import { defineEventHandler, readMultipartFormData } from 'h3'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
+import { writeFile } from 'fs/promises'
+import { join } from 'node:path'
 import { prisma } from '../utils/prisma'
+import { ensureUploadsDir, getUploadPublicUrl } from '../utils/uploads'
+import { decodeUploadFilename, sanitizeUploadFilename } from '../utils/filename'
 import {
-  isValidEmail,
+  getEmailValidationError,
   isValidPhone,
   normalizePhone,
+  PHONE_MASK_ERROR,
   validateFormFiles,
 } from '../../shared/utils/formValidation'
 
@@ -32,41 +35,36 @@ export default defineEventHandler(async (event) => {
   )
   const filesValidationError = validateFormFiles(
     uploadFields.map((field) => ({
-      name: field.filename || 'файл',
+      name: decodeUploadFilename(field.filename),
       size: field.data.length,
+      type: field.type,
     })),
   )
   if (filesValidationError) {
     return { success: false, message: filesValidationError }
   }
 
-  // --- 1. Обработка полей и файлов ---
-  for (const field of formData) {
-    // Обработка файлов (поле 'files' или 'photo')
-    if ((field.name === 'files' || field.name === 'photo') && field.filename && field.data) {
-      const uploadDir = path.join(process.cwd(), 'uploads')
-      await mkdir(uploadDir, { recursive: true })
+  const uploadDir = ensureUploadsDir()
 
-      const ext = field.filename.split('.').pop()
-      const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
-      const filePath = path.join(uploadDir, uniqueName)
+  for (const field of formData) {
+    if ((field.name === 'files' || field.name === 'photo') && field.filename && field.data) {
+      const decodedName = decodeUploadFilename(field.filename)
+      const finalFilename = sanitizeUploadFilename(field.filename)
+      const filePath = join(uploadDir, finalFilename)
 
       await writeFile(filePath, field.data)
 
       uploadedFiles.push({
-        originalName: field.filename,
-        savedName: uniqueName,
-        path: filePath,
-        size: field.data.length
+        originalName: decodedName,
+        savedName: finalFilename,
+        path: getUploadPublicUrl(finalFilename),
+        size: field.data.length,
       })
-    }
-    // Обработка текстовых полей
-    else {
+    } else {
       textFields[field.name] = field.data?.toString() || ''
     }
   }
 
-  // --- 2. Валидация обязательных полей ---
   if (!textFields.name?.trim()) {
     return { success: false, message: 'Пожалуйста, укажите ваше имя' }
   }
@@ -78,16 +76,13 @@ export default defineEventHandler(async (event) => {
   if (!isValidPhone(textFields.phone)) {
     return {
       success: false,
-      message: 'Укажите корректный номер телефона в формате +7 (999) 123-45-67',
+      message: PHONE_MASK_ERROR,
     }
   }
 
-  if (!textFields.email?.trim()) {
-    return { success: false, message: 'Пожалуйста, укажите email' }
-  }
-
-  if (!isValidEmail(textFields.email)) {
-    return { success: false, message: 'Пожалуйста, укажите корректный email' }
+  const emailValidationError = getEmailValidationError(textFields.email ?? '')
+  if (emailValidationError) {
+    return { success: false, message: emailValidationError }
   }
 
   if (!textFields.message?.trim()) {
@@ -98,7 +93,6 @@ export default defineEventHandler(async (event) => {
     return { success: false, message: 'Необходимо согласие на обработку персональных данных' }
   }
 
-  // --- 3. Сохранение в базу данных через Prisma ---
   try {
     const savedRecord = await prisma.formSubmission.create({
       data: {
@@ -108,7 +102,7 @@ export default defineEventHandler(async (event) => {
         message: textFields.message.trim(),
         consent: textFields.consent === 'true',
         files: uploadedFiles.length > 0 ? uploadedFiles : null,
-      }
+      },
     })
 
     console.log(`✅ Заявка сохранена в БД с ID: ${savedRecord.id}`)
@@ -118,10 +112,9 @@ export default defineEventHandler(async (event) => {
       message: 'Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.',
       data: {
         id: savedRecord.id,
-        filesCount: uploadedFiles.length
-      }
+        filesCount: uploadedFiles.length,
+      },
     }
-
   } catch (dbError) {
     console.error('❌ Ошибка при сохранении в БД:', dbError)
     return {

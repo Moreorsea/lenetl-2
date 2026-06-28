@@ -23,4 +23,9 @@ logs
 .env.*
 !.env.example
 
+# User uploads (keep directory via uploads/.gitkeep)
+/uploads/*
+!/uploads/.gitkeep
+/public/uploads/
+
 /app/generated/prisma

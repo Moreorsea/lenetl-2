@@ -115,17 +115,49 @@ onUnmounted(() => {
   padding: 20px;
 
   h2 {
-    font-size: 3.5rem;
+    font-size: clamp(1.75rem, 5vw, 3.5rem);
     margin-bottom: 20px;
+    max-width: 100%;
+    line-height: 1.2;
     text-shadow: 0 0 15px rgba(100, 181, 246, 0.5);
   }
 
   p {
-    font-size: 1.4rem;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
     max-width: 700px;
     margin-bottom: 50px;
     color: #e3f2fd;
     line-height: 1.6;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: auto;
+    padding: 32px 16px 48px;
+
+    h2 {
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin-bottom: 32px;
+    }
+  }
+
+  .top-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    max-width: 320px;
+  }
+
+  .buttons-container {
+    gap: 20px;
+  }
+
+  .license-container {
+    margin-top: 8px;
   }
 }
 

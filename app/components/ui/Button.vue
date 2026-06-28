@@ -55,6 +55,18 @@ const {mode = "light"} = defineProps<{ to: string; label: string; iconClass: str
     transform: scale(1.05);
   }
 
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+    font-size: 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 16px;
+
+    i {
+      font-size: 1.2rem;
+    }
+  }
+
   /* 3. Имитация лёгкого шума / grain (очень важно для реализма) */
   &::before {
     content: '';
