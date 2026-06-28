@@ -4,6 +4,44 @@
 
 set -euo pipefail
 
+load_node_env() {
+  export PATH="/usr/local/bin:/usr/bin:/bin:$HOME/.local/bin:$PATH"
+
+  if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
+    # shellcheck disable=SC1091
+    source "$HOME/.nvm/nvm.sh"
+  fi
+
+  if [[ -s "$HOME/.bashrc" ]]; then
+    # shellcheck disable=SC1091
+    source "$HOME/.bashrc" 2>/dev/null || true
+  fi
+
+  for bin_dir in /opt/nodejs/*/bin "$HOME/.fnm/current/bin"; do
+    if [[ -d "$bin_dir" ]]; then
+      PATH="$bin_dir:$PATH"
+    fi
+  done
+  export PATH
+
+  if [[ -n "${NODE_BIN_DIR:-}" && -d "$NODE_BIN_DIR" ]]; then
+    PATH="$NODE_BIN_DIR:$PATH"
+    export PATH
+  fi
+}
+
+require_command() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    echo "Ошибка: команда '$1' не найдена в PATH=$PATH"
+    exit 1
+  fi
+}
+
+load_node_env
+require_command node
+require_command npm
+require_command pm2
+
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PM2_APP_NAME="${PM2_APP_NAME:-lenetl}"
 BRANCH="${DEPLOY_BRANCH:-master}"
@@ -11,6 +49,7 @@ BRANCH="${DEPLOY_BRANCH:-master}"
 cd "$APP_DIR"
 
 echo "==> Деплой в $APP_DIR (ветка $BRANCH)"
+echo "==> node $(node -v), npm $(npm -v)"
 
 if [[ ! -f .env ]]; then
   echo "Ошибка: нет файла .env в $APP_DIR"
