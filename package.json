@@ -43,5 +43,11 @@
   },
   "prisma": {
     "engineType": "library"
+  },
+  "overrides": {
+    "@img/sharp-libvips-linuxmusl-x64": "npm:@img/sharp-libvips-linux-x64@1.2.4",
+    "@img/sharp-libvips-linuxmusl-arm64": "npm:@img/sharp-libvips-linux-arm64@1.2.4",
+    "@img/sharp-linuxmusl-x64": "npm:@img/sharp-linux-x64@0.34.5",
+    "@img/sharp-linuxmusl-arm64": "npm:@img/sharp-linux-arm64@0.34.5"
   }
 }

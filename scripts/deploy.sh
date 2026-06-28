@@ -75,11 +75,45 @@ echo "==> сборка"
 npm run build
 
 echo "==> зависимости Nitro (.output/server)"
-cd .output/server
-# Nitro может сгенерировать lock с musl-sharp; на glibc-сервере (Debian/Ubuntu) npm ci падает
-rm -f package-lock.json
-npm install --omit=dev --no-package-lock
-cd "$APP_DIR"
+SERVER_DIR="$APP_DIR/.output/server"
+if [[ -f "$SERVER_DIR/package.json" ]]; then
+  cd "$SERVER_DIR"
+  rm -rf node_modules package-lock.json
+
+  node <<'NODE'
+const fs = require('fs');
+const path = 'package.json';
+const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+for (const section of ['dependencies', 'optionalDependencies', 'devDependencies']) {
+  if (!pkg[section]) continue;
+  for (const name of Object.keys(pkg[section])) {
+    if (/musl/i.test(name)) delete pkg[section][name];
+  }
+}
+fs.writeFileSync(path, JSON.stringify(pkg, null, 2));
+NODE
+
+  if ! npm install --omit=dev --no-package-lock --os=linux --libc=glibc; then
+    echo "==> fallback: копируем зависимости из корневого node_modules"
+    mkdir -p node_modules
+    ROOT_DIR="$APP_DIR" node <<'NODE'
+const fs = require('fs');
+const path = require('path');
+const root = process.env.ROOT_DIR;
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const deps = Object.keys(pkg.dependencies || {}).filter((name) => !/musl/i.test(name));
+for (const name of deps) {
+  const src = path.join(root, 'node_modules', name);
+  const dest = path.join('node_modules', name);
+  if (!fs.existsSync(src)) continue;
+  fs.cpSync(src, dest, { recursive: true, force: true });
+}
+NODE
+  fi
+  cd "$APP_DIR"
+else
+  echo "==> package.json в .output/server не найден, пропускаем"
+fi
 
 echo "==> миграции Prisma"
 npm run db:deploy
