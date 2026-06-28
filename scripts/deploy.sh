@@ -7,6 +7,13 @@ set -euo pipefail
 load_node_env() {
   export PATH="/usr/local/bin:/usr/bin:/bin:$HOME/.local/bin:$PATH"
 
+  for profile in "$HOME/.profile" "$HOME/.bash_profile"; do
+    if [[ -s "$profile" ]]; then
+      # shellcheck disable=SC1090
+      source "$profile" 2>/dev/null || true
+    fi
+  done
+
   if [[ -s "$HOME/.nvm/nvm.sh" ]]; then
     # shellcheck disable=SC1091
     source "$HOME/.nvm/nvm.sh"
