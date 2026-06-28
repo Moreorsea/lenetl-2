@@ -76,7 +76,9 @@ npm run build
 
 echo "==> зависимости Nitro (.output/server)"
 cd .output/server
-npm ci --omit=dev 2>/dev/null || npm install --omit=dev
+# Nitro может сгенерировать lock с musl-sharp; на glibc-сервере (Debian/Ubuntu) npm ci падает
+rm -f package-lock.json
+npm install --omit=dev --no-package-lock
 cd "$APP_DIR"
 
 echo "==> миграции Prisma"
