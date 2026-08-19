@@ -26,6 +26,7 @@ logs
 # User uploads (keep directory via uploads/.gitkeep)
 /uploads/*
 !/uploads/.gitkeep
+.deploy-lock-hash
 /public/uploads/
 
 /app/generated/prisma

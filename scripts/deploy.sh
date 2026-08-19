@@ -63,20 +63,39 @@ if [[ ! -f .env ]]; then
   exit 1
 fi
 
-echo "==> git pull"
+echo "==> git sync"
 git fetch origin "$BRANCH"
 git checkout "$BRANCH"
-git pull origin "$BRANCH"
+git reset --hard "origin/$BRANCH"
 
-echo "==> npm ci"
-npm ci
+echo "==> освобождаем RAM (остановка PM2)"
+pm2 stop "$PM2_APP_NAME" 2>/dev/null || true
+
+LOCK_HASH=""
+if command -v sha256sum >/dev/null 2>&1; then
+  LOCK_HASH=$(sha256sum package-lock.json | awk '{print $1}')
+elif command -v shasum >/dev/null 2>&1; then
+  LOCK_HASH=$(shasum -a 256 package-lock.json | awk '{print $1}')
+fi
+
+if [[ -n "$LOCK_HASH" && -f .deploy-lock-hash && "$(cat .deploy-lock-hash)" == "$LOCK_HASH" && -d node_modules ]]; then
+  echo "==> npm ci пропущен (package-lock.json не менялся)"
+else
+  echo "==> npm ci"
+  npm ci --no-audit --no-fund --maxsockets 1
+  if [[ -n "$LOCK_HASH" ]]; then
+    echo "$LOCK_HASH" > .deploy-lock-hash
+  fi
+fi
 
 echo "==> очистка старых артефактов сборки"
 rm -rf .output .nuxt
 rm -rf public/_nuxt 2>/dev/null || true
 
 echo "==> сборка"
+export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=1536}"
 npm run build
+unset NODE_OPTIONS
 
 if [[ ! -d .output/public/_nuxt ]]; then
   echo "Ошибка: после сборки нет .output/public/_nuxt"
