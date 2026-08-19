@@ -1,3 +1,5 @@
+import { randomBytes } from 'node:crypto'
+
 /**
  * Декодирует имя файла из multipart/form-data.
  * Браузеры часто шлют UTF-8 имя, а сервер читает его как latin1 → кракозябры.
@@ -69,6 +71,15 @@ export function sanitizeUploadFilename(raw: string | undefined): string {
   const safeExt = ext.match(/^\.[a-zA-Z0-9]+$/) ? ext : ''
 
   return `${cleanBase}${safeExt || '.bin'}`
+}
+
+/** Уникальное символьное имя для хранения на диске (не угадывается по URL). */
+export function generateStoredFilename(originalName: string): string {
+  const { ext } = splitFilename(originalName)
+  const safeExt = ext.match(/^\.[a-zA-Z0-9]+$/) ? ext : '.bin'
+  const token = randomBytes(16).toString('hex')
+
+  return `${token}${safeExt}`
 }
 
 function hasCyrillic(value: string): boolean {

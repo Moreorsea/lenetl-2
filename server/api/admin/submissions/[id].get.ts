@@ -1,5 +1,6 @@
 import { prisma } from '../../../utils/prisma'
 import { requireAdminSession } from '../../../utils/adminAuth'
+import { resolveSubmissionFiles } from '../../../utils/submissionFiles'
 
 export default defineEventHandler(async (event) => {
   requireAdminSession(event)
@@ -11,14 +12,20 @@ export default defineEventHandler(async (event) => {
 
   const submission = await prisma.formSubmission.findUnique({
     where: { id },
+    include: { attachments: true },
   })
 
   if (!submission) {
     throw createError({ statusCode: 404, message: 'Заявка не найдена' })
   }
 
+  const { attachments: _attachments, ...rest } = submission
+
   return {
     success: true,
-    data: submission,
+    data: {
+      ...rest,
+      files: resolveSubmissionFiles(submission),
+    },
   }
 })

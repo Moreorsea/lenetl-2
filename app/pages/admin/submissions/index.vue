@@ -129,6 +129,7 @@ import {
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
+  pageTransition: false,
 })
 
 const { data, pending, error } = await useFetch<{ success: boolean; data: Submission[] }>(

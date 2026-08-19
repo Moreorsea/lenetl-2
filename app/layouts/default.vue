@@ -23,6 +23,8 @@
     </main>
 
     <Footer />
+
+    <MobileBottomNav />
   </div>
 </template>
 
@@ -45,7 +47,7 @@
   z-index: 3;
 
   @media (max-width: 768px) {
-    padding: 12px 16px 20px;
+    padding: 12px 16px calc(88px + env(safe-area-inset-bottom, 0px));
   }
 }
 

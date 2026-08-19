@@ -78,11 +78,11 @@
           v-else
           class="submission-detail__files">
           <article
-            v-for="(file, index) in files"
-            :key="index"
+            v-for="file in files"
+            :key="file.id ?? file.storedName ?? file.path"
             class="submission-file">
             <header class="submission-file__header">
-              <span class="submission-file__name">{{ file.name }}</span>
+              <span class="submission-file__name">{{ file.originalName || file.name }}</span>
               <a
                 :href="file.path"
                 target="_blank"
@@ -98,7 +98,7 @@
               class="submission-file__preview">
               <img
                 :src="file.path"
-                :alt="file.name"
+                :alt="file.originalName || file.name"
                 loading="lazy" />
             </div>
 
@@ -107,7 +107,7 @@
               class="submission-file__preview submission-file__preview--pdf">
               <iframe
                 :src="file.path"
-                :title="file.name" />
+                :title="file.originalName || file.name" />
             </div>
 
             <div
@@ -141,6 +141,7 @@ import {
 definePageMeta({
   layout: 'admin',
   middleware: 'admin',
+  pageTransition: false,
 })
 
 const route = useRoute()

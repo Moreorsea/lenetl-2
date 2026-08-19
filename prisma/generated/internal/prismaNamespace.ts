@@ -384,7 +384,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  FormSubmission: 'FormSubmission'
+  FormSubmission: 'FormSubmission',
+  SubmissionFile: 'SubmissionFile'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,7 +401,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "formSubmission"
+    modelProps: "formSubmission" | "submissionFile"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -470,6 +471,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SubmissionFile: {
+      payload: Prisma.$SubmissionFilePayload<ExtArgs>
+      fields: Prisma.SubmissionFileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SubmissionFileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionFilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SubmissionFileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionFilePayload>
+        }
+        findFirst: {
+          args: Prisma.SubmissionFileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionFilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SubmissionFileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionFilePayload>
+        }
+        findMany: {
+          args: Prisma.SubmissionFileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionFilePayload>[]
+        }
+        create: {
+          args: Prisma.SubmissionFileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionFilePayload>
+        }
+        createMany: {
+          args: Prisma.SubmissionFileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.SubmissionFileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionFilePayload>
+        }
+        update: {
+          args: Prisma.SubmissionFileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionFilePayload>
+        }
+        deleteMany: {
+          args: Prisma.SubmissionFileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SubmissionFileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.SubmissionFileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionFilePayload>
+        }
+        aggregate: {
+          args: Prisma.SubmissionFileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSubmissionFile>
+        }
+        groupBy: {
+          args: Prisma.SubmissionFileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubmissionFileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SubmissionFileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubmissionFileCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -524,6 +591,20 @@ export const FormSubmissionScalarFieldEnum = {
 export type FormSubmissionScalarFieldEnum = (typeof FormSubmissionScalarFieldEnum)[keyof typeof FormSubmissionScalarFieldEnum]
 
 
+export const SubmissionFileScalarFieldEnum = {
+  id: 'id',
+  submissionId: 'submissionId',
+  originalName: 'originalName',
+  storedName: 'storedName',
+  storagePath: 'storagePath',
+  mimeType: 'mimeType',
+  size: 'size',
+  createdAt: 'createdAt'
+} as const
+
+export type SubmissionFileScalarFieldEnum = (typeof SubmissionFileScalarFieldEnum)[keyof typeof SubmissionFileScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -573,6 +654,16 @@ export const FormSubmissionOrderByRelevanceFieldEnum = {
 } as const
 
 export type FormSubmissionOrderByRelevanceFieldEnum = (typeof FormSubmissionOrderByRelevanceFieldEnum)[keyof typeof FormSubmissionOrderByRelevanceFieldEnum]
+
+
+export const SubmissionFileOrderByRelevanceFieldEnum = {
+  originalName: 'originalName',
+  storedName: 'storedName',
+  storagePath: 'storagePath',
+  mimeType: 'mimeType'
+} as const
+
+export type SubmissionFileOrderByRelevanceFieldEnum = (typeof SubmissionFileOrderByRelevanceFieldEnum)[keyof typeof SubmissionFileOrderByRelevanceFieldEnum]
 
 
 
@@ -740,6 +831,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   formSubmission?: Prisma.FormSubmissionOmit
+  submissionFile?: Prisma.SubmissionFileOmit
 }
 
 /* Types for Logging */

@@ -244,6 +244,7 @@ export type FormSubmissionWhereInput = {
   files?: Prisma.JsonNullableFilter<"FormSubmission">
   createdAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
+  attachments?: Prisma.SubmissionFileListRelationFilter
 }
 
 export type FormSubmissionOrderByWithRelationInput = {
@@ -256,6 +257,7 @@ export type FormSubmissionOrderByWithRelationInput = {
   files?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  attachments?: Prisma.SubmissionFileOrderByRelationAggregateInput
   _relevance?: Prisma.FormSubmissionOrderByRelevanceInput
 }
 
@@ -272,6 +274,7 @@ export type FormSubmissionWhereUniqueInput = Prisma.AtLeast<{
   files?: Prisma.JsonNullableFilter<"FormSubmission">
   createdAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
+  attachments?: Prisma.SubmissionFileListRelationFilter
 }, "id">
 
 export type FormSubmissionOrderByWithAggregationInput = {
@@ -315,6 +318,7 @@ export type FormSubmissionCreateInput = {
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachments?: Prisma.SubmissionFileCreateNestedManyWithoutSubmissionInput
 }
 
 export type FormSubmissionUncheckedCreateInput = {
@@ -327,6 +331,7 @@ export type FormSubmissionUncheckedCreateInput = {
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  attachments?: Prisma.SubmissionFileUncheckedCreateNestedManyWithoutSubmissionInput
 }
 
 export type FormSubmissionUpdateInput = {
@@ -338,6 +343,7 @@ export type FormSubmissionUpdateInput = {
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachments?: Prisma.SubmissionFileUpdateManyWithoutSubmissionNestedInput
 }
 
 export type FormSubmissionUncheckedUpdateInput = {
@@ -350,6 +356,7 @@ export type FormSubmissionUncheckedUpdateInput = {
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attachments?: Prisma.SubmissionFileUncheckedUpdateManyWithoutSubmissionNestedInput
 }
 
 export type FormSubmissionCreateManyInput = {
@@ -435,6 +442,11 @@ export type FormSubmissionSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
+export type FormSubmissionScalarRelationFilter = {
+  is?: Prisma.FormSubmissionWhereInput
+  isNot?: Prisma.FormSubmissionWhereInput
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -455,6 +467,111 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type FormSubmissionCreateNestedOneWithoutAttachmentsInput = {
+  create?: Prisma.XOR<Prisma.FormSubmissionCreateWithoutAttachmentsInput, Prisma.FormSubmissionUncheckedCreateWithoutAttachmentsInput>
+  connectOrCreate?: Prisma.FormSubmissionCreateOrConnectWithoutAttachmentsInput
+  connect?: Prisma.FormSubmissionWhereUniqueInput
+}
+
+export type FormSubmissionUpdateOneRequiredWithoutAttachmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.FormSubmissionCreateWithoutAttachmentsInput, Prisma.FormSubmissionUncheckedCreateWithoutAttachmentsInput>
+  connectOrCreate?: Prisma.FormSubmissionCreateOrConnectWithoutAttachmentsInput
+  upsert?: Prisma.FormSubmissionUpsertWithoutAttachmentsInput
+  connect?: Prisma.FormSubmissionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FormSubmissionUpdateToOneWithWhereWithoutAttachmentsInput, Prisma.FormSubmissionUpdateWithoutAttachmentsInput>, Prisma.FormSubmissionUncheckedUpdateWithoutAttachmentsInput>
+}
+
+export type FormSubmissionCreateWithoutAttachmentsInput = {
+  name: string
+  phone: string
+  email: string
+  message: string
+  consent: boolean
+  files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type FormSubmissionUncheckedCreateWithoutAttachmentsInput = {
+  id?: number
+  name: string
+  phone: string
+  email: string
+  message: string
+  consent: boolean
+  files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type FormSubmissionCreateOrConnectWithoutAttachmentsInput = {
+  where: Prisma.FormSubmissionWhereUniqueInput
+  create: Prisma.XOR<Prisma.FormSubmissionCreateWithoutAttachmentsInput, Prisma.FormSubmissionUncheckedCreateWithoutAttachmentsInput>
+}
+
+export type FormSubmissionUpsertWithoutAttachmentsInput = {
+  update: Prisma.XOR<Prisma.FormSubmissionUpdateWithoutAttachmentsInput, Prisma.FormSubmissionUncheckedUpdateWithoutAttachmentsInput>
+  create: Prisma.XOR<Prisma.FormSubmissionCreateWithoutAttachmentsInput, Prisma.FormSubmissionUncheckedCreateWithoutAttachmentsInput>
+  where?: Prisma.FormSubmissionWhereInput
+}
+
+export type FormSubmissionUpdateToOneWithWhereWithoutAttachmentsInput = {
+  where?: Prisma.FormSubmissionWhereInput
+  data: Prisma.XOR<Prisma.FormSubmissionUpdateWithoutAttachmentsInput, Prisma.FormSubmissionUncheckedUpdateWithoutAttachmentsInput>
+}
+
+export type FormSubmissionUpdateWithoutAttachmentsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type FormSubmissionUncheckedUpdateWithoutAttachmentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type FormSubmissionCountOutputType
+ */
+
+export type FormSubmissionCountOutputType = {
+  attachments: number
+}
+
+export type FormSubmissionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  attachments?: boolean | FormSubmissionCountOutputTypeCountAttachmentsArgs
+}
+
+/**
+ * FormSubmissionCountOutputType without action
+ */
+export type FormSubmissionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FormSubmissionCountOutputType
+   */
+  select?: Prisma.FormSubmissionCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * FormSubmissionCountOutputType without action
+ */
+export type FormSubmissionCountOutputTypeCountAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SubmissionFileWhereInput
+}
 
 
 export type FormSubmissionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -467,6 +584,8 @@ export type FormSubmissionSelect<ExtArgs extends runtime.Types.Extensions.Intern
   files?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  attachments?: boolean | Prisma.FormSubmission$attachmentsArgs<ExtArgs>
+  _count?: boolean | Prisma.FormSubmissionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["formSubmission"]>
 
 
@@ -484,10 +603,16 @@ export type FormSubmissionSelectScalar = {
 }
 
 export type FormSubmissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "email" | "message" | "consent" | "files" | "createdAt" | "updatedAt", ExtArgs["result"]["formSubmission"]>
+export type FormSubmissionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  attachments?: boolean | Prisma.FormSubmission$attachmentsArgs<ExtArgs>
+  _count?: boolean | Prisma.FormSubmissionCountOutputTypeDefaultArgs<ExtArgs>
+}
 
 export type $FormSubmissionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "FormSubmission"
-  objects: {}
+  objects: {
+    attachments: Prisma.$SubmissionFilePayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
@@ -838,6 +963,7 @@ readonly fields: FormSubmissionFieldRefs;
  */
 export interface Prisma__FormSubmissionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  attachments<T extends Prisma.FormSubmission$attachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FormSubmission$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubmissionFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -893,6 +1019,10 @@ export type FormSubmissionFindUniqueArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.FormSubmissionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormSubmissionInclude<ExtArgs> | null
+  /**
    * Filter, which FormSubmission to fetch.
    */
   where: Prisma.FormSubmissionWhereUniqueInput
@@ -911,6 +1041,10 @@ export type FormSubmissionFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Ex
    */
   omit?: Prisma.FormSubmissionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormSubmissionInclude<ExtArgs> | null
+  /**
    * Filter, which FormSubmission to fetch.
    */
   where: Prisma.FormSubmissionWhereUniqueInput
@@ -928,6 +1062,10 @@ export type FormSubmissionFindFirstArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the FormSubmission
    */
   omit?: Prisma.FormSubmissionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormSubmissionInclude<ExtArgs> | null
   /**
    * Filter, which FormSubmission to fetch.
    */
@@ -977,6 +1115,10 @@ export type FormSubmissionFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ext
    */
   omit?: Prisma.FormSubmissionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormSubmissionInclude<ExtArgs> | null
+  /**
    * Filter, which FormSubmission to fetch.
    */
   where?: Prisma.FormSubmissionWhereInput
@@ -1024,6 +1166,10 @@ export type FormSubmissionFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the FormSubmission
    */
   omit?: Prisma.FormSubmissionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormSubmissionInclude<ExtArgs> | null
   /**
    * Filter, which FormSubmissions to fetch.
    */
@@ -1073,6 +1219,10 @@ export type FormSubmissionCreateArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.FormSubmissionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormSubmissionInclude<ExtArgs> | null
+  /**
    * The data needed to create a FormSubmission.
    */
   data: Prisma.XOR<Prisma.FormSubmissionCreateInput, Prisma.FormSubmissionUncheckedCreateInput>
@@ -1101,6 +1251,10 @@ export type FormSubmissionUpdateArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the FormSubmission
    */
   omit?: Prisma.FormSubmissionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormSubmissionInclude<ExtArgs> | null
   /**
    * The data needed to update a FormSubmission.
    */
@@ -1142,6 +1296,10 @@ export type FormSubmissionUpsertArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.FormSubmissionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormSubmissionInclude<ExtArgs> | null
+  /**
    * The filter to search for the FormSubmission to update in case it exists.
    */
   where: Prisma.FormSubmissionWhereUniqueInput
@@ -1168,6 +1326,10 @@ export type FormSubmissionDeleteArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.FormSubmissionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormSubmissionInclude<ExtArgs> | null
+  /**
    * Filter which FormSubmission to delete.
    */
   where: Prisma.FormSubmissionWhereUniqueInput
@@ -1188,6 +1350,30 @@ export type FormSubmissionDeleteManyArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
+ * FormSubmission.attachments
+ */
+export type FormSubmission$attachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SubmissionFile
+   */
+  select?: Prisma.SubmissionFileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SubmissionFile
+   */
+  omit?: Prisma.SubmissionFileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubmissionFileInclude<ExtArgs> | null
+  where?: Prisma.SubmissionFileWhereInput
+  orderBy?: Prisma.SubmissionFileOrderByWithRelationInput | Prisma.SubmissionFileOrderByWithRelationInput[]
+  cursor?: Prisma.SubmissionFileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SubmissionFileScalarFieldEnum | Prisma.SubmissionFileScalarFieldEnum[]
+}
+
+/**
  * FormSubmission without action
  */
 export type FormSubmissionDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1199,4 +1385,8 @@ export type FormSubmissionDefaultArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the FormSubmission
    */
   omit?: Prisma.FormSubmissionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FormSubmissionInclude<ExtArgs> | null
 }

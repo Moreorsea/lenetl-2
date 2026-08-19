@@ -1,7 +1,12 @@
 export type SubmissionFile = {
+  id?: number
+  originalName: string
+  storedName?: string
+  /** Отображаемое имя (обычно originalName) */
   name: string
   path: string
   type?: string
+  size?: number
 }
 
 export type Submission = {
@@ -18,17 +23,28 @@ export type Submission = {
 
 export function parseSubmissionFiles(files: Submission['files']): SubmissionFile[] {
   if (!files || !Array.isArray(files)) return []
-  return files
+
+  return files.map((file, index) => ({
+    id: file.id ?? index,
+    originalName: file.originalName ?? file.name,
+    storedName: file.storedName,
+    name: file.originalName ?? file.name,
+    path: file.path,
+    type: file.type,
+    size: file.size,
+  }))
 }
 
 export function isImageFile(file: SubmissionFile): boolean {
   if (file.type?.startsWith('image/')) return true
-  return /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(file.name)
+  const name = file.originalName || file.name
+  return /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(name)
 }
 
 export function isPdfFile(file: SubmissionFile): boolean {
   if (file.type === 'application/pdf') return true
-  return /\.pdf$/i.test(file.name)
+  const name = file.originalName || file.name
+  return /\.pdf$/i.test(name)
 }
 
 export function formatSubmissionDate(value: string): string {

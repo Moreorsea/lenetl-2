@@ -71,8 +71,18 @@ git pull origin "$BRANCH"
 echo "==> npm ci"
 npm ci
 
+echo "==> очистка старых артефактов сборки"
+rm -rf .output .nuxt
+rm -rf public/_nuxt 2>/dev/null || true
+
 echo "==> сборка"
 npm run build
+
+if [[ ! -d .output/public/_nuxt ]]; then
+  echo "Ошибка: после сборки нет .output/public/_nuxt"
+  exit 1
+fi
+echo "==> сборка ok, файлов в _nuxt: $(find .output/public/_nuxt -type f | wc -l)"
 
 echo "==> зависимости Nitro (.output/server)"
 SERVER_DIR="$APP_DIR/.output/server"

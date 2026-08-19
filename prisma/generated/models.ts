@@ -9,4 +9,5 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/FormSubmission.js'
+export type * from './models/SubmissionFile.js'
 export type * from './commonInputTypes.js'

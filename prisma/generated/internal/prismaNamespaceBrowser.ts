@@ -51,7 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  FormSubmission: 'FormSubmission'
+  FormSubmission: 'FormSubmission',
+  SubmissionFile: 'SubmissionFile'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -83,6 +84,20 @@ export const FormSubmissionScalarFieldEnum = {
 } as const
 
 export type FormSubmissionScalarFieldEnum = (typeof FormSubmissionScalarFieldEnum)[keyof typeof FormSubmissionScalarFieldEnum]
+
+
+export const SubmissionFileScalarFieldEnum = {
+  id: 'id',
+  submissionId: 'submissionId',
+  originalName: 'originalName',
+  storedName: 'storedName',
+  storagePath: 'storagePath',
+  mimeType: 'mimeType',
+  size: 'size',
+  createdAt: 'createdAt'
+} as const
+
+export type SubmissionFileScalarFieldEnum = (typeof SubmissionFileScalarFieldEnum)[keyof typeof SubmissionFileScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -134,4 +149,14 @@ export const FormSubmissionOrderByRelevanceFieldEnum = {
 } as const
 
 export type FormSubmissionOrderByRelevanceFieldEnum = (typeof FormSubmissionOrderByRelevanceFieldEnum)[keyof typeof FormSubmissionOrderByRelevanceFieldEnum]
+
+
+export const SubmissionFileOrderByRelevanceFieldEnum = {
+  originalName: 'originalName',
+  storedName: 'storedName',
+  storagePath: 'storagePath',
+  mimeType: 'mimeType'
+} as const
+
+export type SubmissionFileOrderByRelevanceFieldEnum = (typeof SubmissionFileOrderByRelevanceFieldEnum)[keyof typeof SubmissionFileOrderByRelevanceFieldEnum]
 

@@ -1,8 +1,9 @@
 import { createReadStream, existsSync, statSync } from 'node:fs'
 import { extname } from 'node:path'
 import { sendStream } from 'h3'
-import { resolveUploadFilePath } from '../../utils/uploads'
-import { isProtectedUploadPath } from '../../utils/submissionFiles'
+import { prisma } from '../../../utils/prisma'
+import { requireAdminSession } from '../../../utils/adminAuth'
+import { resolveUploadFilePath } from '../../../utils/uploads'
 
 const MIME_TYPES: Record<string, string> = {
   '.jpg': 'image/jpeg',
@@ -21,27 +22,38 @@ const MIME_TYPES: Record<string, string> = {
 }
 
 export default defineEventHandler(async (event) => {
-  const pathParam = getRouterParam(event, 'path')
+  requireAdminSession(event)
 
-  if (!pathParam) {
+  const storedName = getRouterParam(event, 'storedName')
+  if (!storedName) {
     throw createError({ statusCode: 404, message: 'Файл не найден' })
   }
 
-  if (await isProtectedUploadPath(pathParam)) {
-    throw createError({ statusCode: 403, message: 'Доступ к файлу только через админ-панель' })
+  const fileRecord = await prisma.submissionFile.findUnique({
+    where: { storedName },
+  })
+
+  if (!fileRecord) {
+    throw createError({ statusCode: 404, message: 'Файл не найден' })
   }
 
-  const filePath = resolveUploadFilePath(pathParam)
+  const filePath = resolveUploadFilePath(fileRecord.storagePath)
 
   if (!existsSync(filePath) || !statSync(filePath).isFile()) {
-    throw createError({ statusCode: 404, message: 'Файл не найден' })
+    throw createError({ statusCode: 404, message: 'Файл не найден на диске' })
   }
 
   const ext = extname(filePath).toLowerCase()
-  const mime = MIME_TYPES[ext] || 'application/octet-stream'
+  const mime = fileRecord.mimeType || MIME_TYPES[ext] || 'application/octet-stream'
+  const encodedName = encodeURIComponent(fileRecord.originalName)
 
   setResponseHeader(event, 'Content-Type', mime)
-  setResponseHeader(event, 'Cache-Control', 'private, max-age=3600')
+  setResponseHeader(event, 'Cache-Control', 'private, no-store')
+  setResponseHeader(
+    event,
+    'Content-Disposition',
+    `inline; filename*=UTF-8''${encodedName}`,
+  )
 
   return sendStream(event, createReadStream(filePath))
 })

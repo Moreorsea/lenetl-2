@@ -2,8 +2,8 @@ import { defineEventHandler, readMultipartFormData } from 'h3'
 import { writeFile } from 'fs/promises'
 import { join } from 'node:path'
 import { prisma } from '../utils/prisma'
-import { ensureUploadsDir, getUploadPublicUrl } from '../utils/uploads'
-import { decodeUploadFilename, sanitizeUploadFilename } from '../utils/filename'
+import { ensureUploadsDir } from '../utils/uploads'
+import { decodeUploadFilename, generateStoredFilename } from '../utils/filename'
 import {
   getEmailValidationError,
   isValidPhone,
@@ -19,12 +19,11 @@ export default defineEventHandler(async (event) => {
     return { success: false, message: 'Данные формы не получены' }
   }
 
-  let textFields: Record<string, string> = {}
-  let uploadedFiles: Array<{
+  const textFields: Record<string, string> = {}
+  const pendingFiles: Array<{
     originalName: string
-    savedName: string
-    path: string
-    size: number
+    data: Buffer
+    type: string
   }> = []
 
   const uploadFields = formData.filter(
@@ -44,23 +43,21 @@ export default defineEventHandler(async (event) => {
     return { success: false, message: filesValidationError }
   }
 
-  const uploadDir = ensureUploadsDir()
+  const now = new Date()
+  const pad = (num: number) => String(num).padStart(2, '0')
+  const formattedDate = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`
+  const uniqueSuffix = Math.random().toString(36).substring(2, 7)
+  const submissionDirName = `${formattedDate}_${uniqueSuffix}`
+  const submissionDir = ensureUploadsDir(submissionDirName)
 
   for (const field of formData) {
     if ((field.name === 'files' || field.name === 'photo') && field.filename && field.data) {
-      const decodedName = decodeUploadFilename(field.filename)
-      const finalFilename = sanitizeUploadFilename(field.filename)
-      const filePath = join(uploadDir, finalFilename)
-
-      await writeFile(filePath, field.data)
-
-      uploadedFiles.push({
-        originalName: decodedName,
-        savedName: finalFilename,
-        path: getUploadPublicUrl(finalFilename),
-        size: field.data.length,
+      pendingFiles.push({
+        originalName: decodeUploadFilename(field.filename),
+        data: field.data,
+        type: field.type || 'application/octet-stream',
       })
-    } else {
+    } else if (field.name) {
       textFields[field.name] = field.data?.toString() || ''
     }
   }
@@ -101,9 +98,28 @@ export default defineEventHandler(async (event) => {
         email: textFields.email.trim(),
         message: textFields.message.trim(),
         consent: textFields.consent === 'true',
-        files: uploadedFiles.length > 0 ? uploadedFiles : null,
+        files: null,
       },
     })
+
+    for (const file of pendingFiles) {
+      const storedName = generateStoredFilename(file.originalName)
+      const storagePath = `${submissionDirName}/${storedName}`.replace(/\\/g, '/')
+      const filePath = join(submissionDir, storedName)
+
+      await writeFile(filePath, file.data)
+
+      await prisma.submissionFile.create({
+        data: {
+          submissionId: savedRecord.id,
+          originalName: file.originalName,
+          storedName,
+          storagePath,
+          mimeType: file.type,
+          size: file.data.length,
+        },
+      })
+    }
 
     console.log(`✅ Заявка сохранена в БД с ID: ${savedRecord.id}`)
 
@@ -112,7 +128,7 @@ export default defineEventHandler(async (event) => {
       message: 'Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.',
       data: {
         id: savedRecord.id,
-        filesCount: uploadedFiles.length,
+        filesCount: pendingFiles.length,
       },
     }
   } catch (dbError) {

@@ -15,7 +15,6 @@ type EquipmentCard = {
   description: string;
 }
 
-
 const cards: EquipmentCard[] = [
   {
     name: 'Sonel MPI-525',

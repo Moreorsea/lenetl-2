@@ -81,6 +81,7 @@
 <script lang="ts" setup>
 definePageMeta({
   layout: false,
+  pageTransition: false,
 })
 
 const login = ref('')
