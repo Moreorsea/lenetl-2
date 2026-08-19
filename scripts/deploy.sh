@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Деплой на прод: git pull → сборка → миграции → перезапуск PM2.
-# Запускать на сервере из корня проекта: bash scripts/deploy.sh
+# Полный деплой на сервере (git pull → npm ci → build → PM2).
+# Требует много RAM. В проде используется GitHub Actions (сборка в CI, на сервер — только .output).
+# Ручной запуск: bash scripts/deploy.sh
 
 set -euo pipefail
 

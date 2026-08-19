@@ -10,12 +10,57 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    name: SSH deploy
+  build-and-deploy:
+    name: Build on CI and deploy artifact
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy via SSH
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Nuxt
+        run: npm run build
+
+      - name: Install Nitro server dependencies
+        run: |
+          cd .output/server
+          rm -rf node_modules package-lock.json
+          node <<'NODE'
+          const fs = require('fs');
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          for (const section of ['dependencies', 'optionalDependencies', 'devDependencies']) {
+            if (!pkg[section]) continue;
+            for (const name of Object.keys(pkg[section])) {
+              if (/musl/i.test(name)) delete pkg[section][name];
+            }
+          }
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          NODE
+          npm install --omit=dev --no-package-lock
+
+      - name: Run Prisma migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "DATABASE_URL не задан — миграции пропущены"
+            exit 0
+          fi
+          npx prisma migrate deploy
+
+      - name: Pack build artifact
+        run: tar -czf deploy.tar.gz .output
+
+      - name: Sync repo on server
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -23,12 +68,46 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script_stop: true
-          command_timeout: 30m
+          command_timeout: 10m
           script: |
-            bash -lc "set -e
-            cd ${{ secrets.DEPLOY_PATH }}
+            set -e
+            cd "${{ secrets.DEPLOY_PATH }}"
             git fetch origin master
             git checkout master 2>/dev/null || git checkout -b master
             git reset --hard origin/master
-            chmod +x scripts/deploy.sh
-            bash scripts/deploy.sh"
+
+      - name: Upload build artifact
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: deploy.tar.gz
+          target: ${{ secrets.DEPLOY_PATH }}
+
+      - name: Restart PM2 on server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script_stop: true
+          command_timeout: 10m
+          script: |
+            set -e
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            cd "${{ secrets.DEPLOY_PATH }}"
+            pm2 stop lenetl 2>/dev/null || true
+            rm -rf .output
+            tar -xzf deploy.tar.gz
+            rm -f deploy.tar.gz
+            if pm2 describe lenetl >/dev/null 2>&1; then
+              pm2 restart ecosystem.config.cjs --update-env
+            else
+              pm2 start ecosystem.config.cjs
+              pm2 save
+            fi
+            pm2 status lenetl
