@@ -11,7 +11,9 @@ echo "==> Baseline Prisma для существующей БД"
 
 npx prisma migrate resolve --applied 20260530133049_init
 npx prisma migrate resolve --applied 20260530150840_required_email_message
-npx prisma migrate resolve --applied 20260819190000_submission_files
 
 echo "==> Готово. Проверка:"
 npx prisma migrate status
+
+echo ""
+echo "Затем примените новые миграции: npx prisma migrate deploy"

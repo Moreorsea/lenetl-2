@@ -56,7 +56,24 @@ jobs:
           trap cleanup EXIT
 
           sleep 3
-          npx prisma migrate deploy
+
+          run_migrate() {
+            npx prisma migrate deploy 2>&1
+          }
+
+          OUTPUT="$(run_migrate)" || CODE=$?
+          CODE=${CODE:-0}
+          echo "$OUTPUT"
+
+          if [ "$CODE" -ne 0 ] && echo "$OUTPUT" | grep -q "P3005"; then
+            echo "==> P3005: БД уже существует, выполняем baseline старых миграций"
+            npx prisma migrate resolve --applied 20260530133049_init
+            npx prisma migrate resolve --applied 20260530150840_required_email_message
+            echo "==> Повтор migrate deploy"
+            npx prisma migrate deploy
+          elif [ "$CODE" -ne 0 ]; then
+            exit "$CODE"
+          fi
 
       - name: Build Nuxt
         run: npm run build
