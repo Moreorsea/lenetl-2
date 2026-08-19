@@ -57,21 +57,19 @@ jobs:
 
           sleep 3
 
-          run_migrate() {
-            npx prisma migrate deploy 2>&1
-          }
-
-          OUTPUT="$(run_migrate)" || CODE=$?
-          CODE=${CODE:-0}
+          set +e
+          OUTPUT="$(npx prisma migrate deploy 2>&1)"
+          CODE=$?
+          set -e
           echo "$OUTPUT"
 
           if [ "$CODE" -ne 0 ] && echo "$OUTPUT" | grep -q "P3005"; then
-            echo "==> P3005: БД уже существует, выполняем baseline старых миграций"
+            echo "==> P3005: baseline старых миграций"
             npx prisma migrate resolve --applied 20260530133049_init
             npx prisma migrate resolve --applied 20260530150840_required_email_message
-            echo "==> Повтор migrate deploy"
             npx prisma migrate deploy
           elif [ "$CODE" -ne 0 ]; then
+            echo "ОШИБКА миграций, код $CODE"
             exit "$CODE"
           fi
 
@@ -96,25 +94,11 @@ jobs:
           npm install --omit=dev --no-package-lock
 
       - name: Pack build artifact
-        run: tar -czf deploy.tar.gz .output
+        run: |
+          tar -czf deploy.tar.gz .output
+          ls -lh deploy.tar.gz
 
-      - name: Sync repo on server
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          script_stop: true
-          command_timeout: 10m
-          script: |
-            set -e
-            cd "${{ secrets.DEPLOY_PATH }}"
-            git fetch origin master
-            git checkout master 2>/dev/null || git checkout -b master
-            git reset --hard origin/master
-
-      - name: Upload build artifact
+      - name: Upload and deploy on server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -123,8 +107,9 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           source: deploy.tar.gz
           target: ${{ secrets.DEPLOY_PATH }}
+          timeout: 30m
 
-      - name: Restart PM2 on server
+      - name: Activate release on server
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -132,20 +117,14 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script_stop: true
-          command_timeout: 10m
+          command_timeout: 15m
           script: |
-            set -e
+            set -ex
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             cd "${{ secrets.DEPLOY_PATH }}"
-            pm2 stop lenetl 2>/dev/null || true
-            rm -rf .output
-            tar -xzf deploy.tar.gz
-            rm -f deploy.tar.gz
-            if pm2 describe lenetl >/dev/null 2>&1; then
-              pm2 restart ecosystem.config.cjs --update-env
-            else
-              pm2 start ecosystem.config.cjs
-              pm2 save
-            fi
-            pm2 status lenetl
+            git fetch origin master
+            git checkout master 2>/dev/null || git checkout -b master
+            git reset --hard origin/master
+            chmod +x scripts/deploy-remote.sh
+            bash scripts/deploy-remote.sh "${{ secrets.DEPLOY_PATH }}"
