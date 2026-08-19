@@ -47,16 +47,6 @@ jobs:
           NODE
           npm install --omit=dev --no-package-lock
 
-      - name: Run Prisma migrations
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: |
-          if [ -z "$DATABASE_URL" ]; then
-            echo "DATABASE_URL не задан — миграции пропущены"
-            exit 0
-          fi
-          npx prisma migrate deploy
-
       - name: Pack build artifact
         run: tar -czf deploy.tar.gz .output
 
@@ -104,6 +94,19 @@ jobs:
             rm -rf .output
             tar -xzf deploy.tar.gz
             rm -f deploy.tar.gz
+            if [ -f .env ]; then
+              set -a
+              # shellcheck disable=SC1091
+              source .env
+              set +a
+              echo "==> Prisma migrate deploy (на сервере, 127.0.0.1)"
+              npx --yes prisma@7.8.0 migrate deploy || {
+                code=$?
+                if [ "$code" -ne 0 ]; then
+                  echo "Миграции пропущены (код $code). Проверьте prisma migrate status на сервере."
+                fi
+              }
+            fi
             if pm2 describe lenetl >/dev/null 2>&1; then
               pm2 restart ecosystem.config.cjs --update-env
             else
