@@ -1,7 +1,8 @@
 <template>
   <footer class="site-footer">
+    <div class="site-footer__inner">
     <nav class="site-footer__actions" aria-label="Быстрые действия">
-      <NuxtLink to="/form" class="site-footer__action site-footer__action--lead">
+      <NuxtLink to="/#form" class="site-footer__action site-footer__action--lead">
         Оставить заявку
         <span aria-hidden="true">→</span>
       </NuxtLink>
@@ -52,11 +53,11 @@
 
       <section class="site-footer__section site-footer__section--links">
         <NuxtLink to="/services" class="site-footer__action site-footer__action--inline">
-          Услуги и цены
+          Прайс
           <span aria-hidden="true">→</span>
         </NuxtLink>
-        <NuxtLink to="/equipment" class="site-footer__action site-footer__action--inline">
-          Наше оборудование
+        <NuxtLink to="/#equipment" class="site-footer__action site-footer__action--inline">
+          Оборудование
           <span aria-hidden="true">→</span>
         </NuxtLink>
       </section>
@@ -76,6 +77,9 @@
             rel="noopener noreferrer">
             MoreOrSea
           </a>
+          <span
+            class="site-footer__heart"
+            aria-hidden="true">♥</span>
         </p>
       </div>
       <nav class="site-footer__bottom-links" aria-label="Правовая информация">
@@ -83,41 +87,49 @@
         <NuxtLink to="/data-processing">Правила обработки данных</NuxtLink>
       </nav>
     </div>
+    </div>
   </footer>
 </template>
 
 <style lang="scss" scoped>
 .site-footer {
   position: relative;
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 8px 0 28px;
-  color: #0d1b2a;
+  width: 100%;
+  background: var(--lenet-dark);
+  color: var(--lenet-light-text);
   z-index: 3;
 
-  @media (min-width: 769px) {
-    max-width: none;
-    padding: 20px 0 40px;
-    --footer-grid-columns: 1fr 1fr 1fr;
-    --footer-grid-gap: 80px;
+  &__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4px 20px calc(28px + env(safe-area-inset-bottom, 0px));
+
+    @media (min-width: 769px) {
+      padding: 10px 20px 40px;
+      --footer-grid-columns: 1fr 1fr 1fr;
+      --footer-grid-gap: 80px;
+    }
+
+    @media (max-width: 768px) {
+      padding: 4px 16px calc(88px + env(safe-area-inset-bottom, 0px));
+    }
   }
 
   &__actions,
   &__main,
   &__bottom {
-    border-bottom: 1px solid rgba(13, 27, 42, 0.18);
+    border-bottom: 1px solid var(--lenet-border-light);
   }
 
   &__actions {
-    border-top: 1px solid rgba(13, 27, 42, 0.18);
-    padding: 22px 0;
+    padding: 14px 0 22px;
 
     @media (min-width: 769px) {
       display: grid;
       grid-template-columns: var(--footer-grid-columns);
       gap: var(--footer-grid-gap);
       align-items: start;
-      padding: 28px 0;
+      padding: 16px 0 28px;
     }
   }
 
@@ -146,7 +158,7 @@
     & + & {
       margin-top: 22px;
       padding-top: 22px;
-      border-top: 1px solid rgba(13, 27, 42, 0.18);
+      border-top: 1px solid var(--lenet-border-light);
 
       @media (min-width: 769px) {
         margin-top: 0;
@@ -177,7 +189,7 @@
     gap: 12px;
     width: 100%;
     margin-bottom: 18px;
-    color: #0d1b2a;
+    color: var(--lenet-light-text);
     font-size: 1.05rem;
     font-weight: 700;
     line-height: 1.3;
@@ -189,12 +201,18 @@
     }
 
     span {
+      display: inline-block;
       font-weight: 400;
       font-size: 1.1rem;
+      transition: transform 0.25s ease;
     }
 
     &:hover {
-      color: #0d47a1;
+      color: var(--lenet-accent);
+
+      span {
+        transform: translateX(6px);
+      }
     }
 
     &--lead {
@@ -245,7 +263,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #0d1b2a;
+    background: var(--lenet-light-text);
     flex-shrink: 0;
 
     @media (min-width: 769px) {
@@ -259,7 +277,7 @@
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #0d1b2a;
+    color: var(--lenet-light-text);
 
     &--schedule {
       @media (min-width: 769px) {
@@ -279,14 +297,15 @@
     font-size: 0.98rem;
     font-weight: 400;
     line-height: 1.45;
-    color: #0d1b2a;
+    color: var(--lenet-light-text);
   }
 
   &__plain-link {
     text-decoration: none;
+    transition: color 0.2s ease;
 
     &:hover {
-      color: #0d47a1;
+      color: var(--lenet-accent);
     }
   }
 
@@ -313,7 +332,7 @@
   &__legal {
     font-size: 12px;
     line-height: 1.55;
-    color: rgba(13, 27, 42, 0.68);
+    color: var(--lenet-legal-text-light);
 
     p {
       margin: 0 0 2px;
@@ -326,7 +345,7 @@
     font-weight: 800;
     line-height: 0.95;
     letter-spacing: -0.02em;
-    color: rgba(13, 27, 42, 0.72);
+    color: var(--lenet-accent);
     text-transform: uppercase;
 
     @media (min-width: 769px) {
@@ -339,18 +358,29 @@
     margin: 12px 0 0;
     font-size: 13px;
     line-height: 1.5;
-    color: rgba(13, 27, 42, 0.68);
+    color: var(--lenet-legal-text-light);
 
     a {
       font-weight: 600;
-      color: rgba(13, 27, 42, 0.68);
+      color: var(--lenet-legal-text-light);
       text-decoration: underline;
       text-underline-offset: 2px;
+      transition: color 0.2s ease;
 
       &:hover {
-        color: #0d47a1;
+        color: var(--lenet-accent);
       }
     }
+  }
+
+  &__heart {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 0.85em;
+    color: var(--lenet-legal-text-light);
+    vertical-align: baseline;
+    transform: scaleX(0.78) scaleY(1.12);
+    transform-origin: center;
   }
 
   &__bottom-links {
@@ -368,11 +398,12 @@
     }
 
     a {
-      color: rgba(13, 27, 42, 0.68);
+      color: var(--lenet-legal-text-light);
       text-decoration: none;
+      transition: color 0.2s ease;
 
       &:hover {
-        color: #0d47a1;
+        color: var(--lenet-accent);
       }
     }
   }

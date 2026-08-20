@@ -29,11 +29,7 @@ defineProps<{
   h1 {
     margin: 0 0 20px;
     font-size: 2.8rem;
-    text-shadow: 0 0 20px rgba(100, 181, 246, 0.7);
-    background: linear-gradient(to right, #e3f2fd, #bbdefb);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--lenet-body-text);
 
     @media (max-width: 768px) {
       font-size: 2rem;
@@ -57,8 +53,7 @@ defineProps<{
     max-width: 800px;
     margin: 0 auto;
     line-height: 1.6;
-    color: #e3f2fd;
-    text-shadow: 0 0 10px rgba(100, 181, 246, 0.5);
+    color: var(--lenet-text-muted);
 
     @media (max-width: 768px) {
       font-size: 1rem;

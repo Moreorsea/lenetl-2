@@ -1,35 +1,58 @@
 <template>
-  <header>
-    <NuxtLink
-      class="logo"
-      to="/">
-      <i class="fas fa-bolt"></i>
-      <h1>ЛенЭТЛ</h1>
-    </NuxtLink>
-
-    <nav
-      id="main-nav"
-      class="nav-links">
+  <header class="site-header">
+    <div class="site-header__inner">
       <NuxtLink
-        v-for="item in siteNavItems"
-        :key="item.to"
-        :to="item.to">
-        {{ item.label === 'Оборуд.' ? 'Оборудование' : item.label }}
+        class="logo"
+        to="/">
+        <i class="fas fa-bolt"></i>
+        <h1>ЛенЭТЛ</h1>
       </NuxtLink>
-    </nav>
+
+      <nav
+        id="main-nav"
+        class="nav-links">
+        <NuxtLink
+          v-for="item in siteNavItems"
+          :key="item.to"
+          :to="item.to"
+          :class="{ 'nav-links__item--active': isNavItemActive(route.path, item, route.hash) }">
+          {{ item.label === 'Оборуд.' ? 'Оборудование' : item.label }}
+        </NuxtLink>
+      </nav>
+    </div>
   </header>
 </template>
 
 <script lang="ts" setup>
+const route = useRoute();
 </script>
 
 <style lang="scss" scoped>
-header {
+.site-header {
+  width: 100%;
+  background: var(--lenet-header-bg);
+  color: var(--lenet-body-text);
+  border-bottom: 1px solid var(--lenet-border-soft);
+  z-index: 3;
+
+  @media (min-width: 769px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    backdrop-filter: blur(10px);
+    background: rgba(242, 245, 248, 0.92);
+  }
+}
+
+.site-header__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
-  border-bottom: 1px solid rgba(100, 181, 246, 0.3);
+  justify-content: space-between;
 }
 
 .logo {
@@ -40,41 +63,33 @@ header {
 
 .logo i {
   font-size: 2rem;
-  color: #64b5f6;
+  color: var(--lenet-dark);
   margin-right: 10px;
 }
 
 .logo h1 {
   font-size: 1.8rem;
-  font-weight: 600;
-  background: linear-gradient(to right, #64b5f6, #90caf9);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  font-weight: 800;
+  color: var(--lenet-dark);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
 }
 
 .nav-links {
   display: flex;
   gap: 30px;
 
-  .router-link-active {
-    color: #64b5f6;
+  &__item--active {
+    color: var(--lenet-accent);
 
     &::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: #64b5f6;
-      transition: width 0.3s;
+      width: 100%;
     }
   }
 }
 
 .nav-links a {
-  color: #bbdefb;
+  color: var(--lenet-body-text);
   text-decoration: none;
   font-weight: 500;
   font-size: 1.1rem;
@@ -83,7 +98,7 @@ header {
 }
 
 .nav-links a:hover {
-  color: #64b5f6;
+  color: var(--lenet-accent);
 }
 
 .nav-links a::after {
@@ -93,7 +108,7 @@ header {
   left: 0;
   width: 0;
   height: 2px;
-  background: #64b5f6;
+  background: var(--lenet-accent);
   transition: width 0.3s;
 }
 
@@ -102,8 +117,8 @@ header {
 }
 
 @media (max-width: 768px) {
-  header {
-    padding: 12px 0;
+  .site-header__inner {
+    padding: 12px 16px;
   }
 
   .logo h1 {

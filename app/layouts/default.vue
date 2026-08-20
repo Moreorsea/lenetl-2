@@ -15,17 +15,18 @@
     <circle cx="80" cy="80" r="1.5" fill="#64b5f6" />
 </svg>
   <div class="overlay"></div> -->
+  <Header />
+
   <div class="container">
-    <Header />
 
     <main>
       <slot />
     </main>
 
-    <Footer />
-
     <MobileBottomNav />
   </div>
+
+  <Footer />
 </template>
 
 <style lang="scss" scoped>
@@ -45,6 +46,11 @@
   margin: 0 auto;
   padding: 20px;
   z-index: 3;
+
+  @media (min-width: 769px) {
+    // Компенсация фиксированной шапки (~80px) + прежний отступ
+    padding-top: 100px;
+  }
 
   @media (max-width: 768px) {
     padding: 12px 16px calc(88px + env(safe-area-inset-bottom, 0px));

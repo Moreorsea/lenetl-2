@@ -7,7 +7,7 @@
       :key="item.to"
       :to="item.to"
       class="mobile-bottom-nav__item"
-      :class="{ 'mobile-bottom-nav__item--active': isNavItemActive(route.path, item) }">
+      :class="{ 'mobile-bottom-nav__item--active': isNavItemActive(route.path, item, route.hash) }">
       <i
         class="fas mobile-bottom-nav__icon"
         :class="item.icon"
