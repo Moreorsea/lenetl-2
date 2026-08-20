@@ -51,13 +51,10 @@
       </section>
 
       <section class="site-footer__section site-footer__section--links">
-        <div class="site-footer__section-head site-footer__section-head--links">
-          <NuxtLink to="/services" class="site-footer__action site-footer__action--inline">
-            Услуги и цены
-            <span aria-hidden="true">→</span>
-          </NuxtLink>
-          <span class="site-footer__dot" aria-hidden="true" />
-        </div>
+        <NuxtLink to="/services" class="site-footer__action site-footer__action--inline">
+          Услуги и цены
+          <span aria-hidden="true">→</span>
+        </NuxtLink>
         <NuxtLink to="/equipment" class="site-footer__action site-footer__action--inline">
           Наше оборудование
           <span aria-hidden="true">→</span>
@@ -242,14 +239,6 @@
     gap: 12px;
     margin-bottom: 16px;
     width: 100%;
-
-    &--links {
-      margin-bottom: 0;
-
-      @media (min-width: 769px) {
-        margin-bottom: 18px;
-      }
-    }
   }
 
   &__dot {
