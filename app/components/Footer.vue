@@ -1,89 +1,91 @@
 <template>
   <footer class="site-footer">
-    <div class="site-footer__card">
-      <div class="site-footer__grid">
-        <div class="site-footer__brand">
-          <p class="site-footer__name">ЛенЭТЛ</p>
-          <p class="site-footer__tagline">Электротехническая лаборатория</p>
-          <p class="site-footer__copyright">
-            © 2026 ЛенЭТЛ.
-            <span class="site-footer__copyright-reg">Св-во о регистрации № 06-68/ЭЛ-25</span>
-          </p>
-          <NuxtLink to="/contacts" class="site-footer__contacts-link">
-            Все контакты
-            <i class="fas fa-arrow-right" />
-          </NuxtLink>
-        </div>
-
-        <div class="site-footer__contacts">
-          <p class="site-footer__heading">Связаться с нами</p>
-          <ul class="site-footer__contact-list">
-            <li>
-              <a href="tel:+79944182338">
-                <i class="fas fa-phone" />
-                +7 (994) 418-23-38
-              </a>
-            </li>
-            <li>
-              <a href="mailto:lenetl@yandex.ru">
-                <i class="fas fa-envelope" />
-                lenetl@yandex.ru
-              </a>
-            </li>
-            <li class="site-footer__address">
-              <a
-                href="https://yandex.ru/maps/-/CHGgJTJt"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="site-footer__address-card">
-                <span
-                  class="site-footer__address-icon"
-                  aria-hidden="true">
-                  <i class="fas fa-map-marker-alt" />
-                </span>
-                <span class="site-footer__address-text">
-                  <span class="site-footer__address-city">Санкт-Петербург</span>
-                  <span class="site-footer__address-street">Б. Сампсониевский пр., 29Б</span>
-                  <span class="site-footer__address-route">
-                    Открыть на карте
-                    <i class="fas fa-arrow-right" />
-                  </span>
-                </span>
-              </a>
-            </li>
-          </ul>
-          <div class="site-footer__messengers">
-            <a
-              href="https://t.me/etl_spb"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="site-footer__messenger site-footer__messenger--tg"
-              aria-label="Telegram">
-              <i class="fab fa-telegram" />
-            </a>
-            <a
-              href="https://wa.me/79944182338"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="site-footer__messenger site-footer__messenger--wa"
-              aria-label="WhatsApp">
-              <i class="fab fa-whatsapp" />
-            </a>
-          </div>
-        </div>
-
-        <nav class="site-footer__legal" aria-label="Правовая информация">
-          <p class="site-footer__heading">Документы</p>
-          <ul>
-            <li>
-              <NuxtLink to="/data-processing">Правила обработки данных</NuxtLink>
-            </li>
-            <li>
-              <NuxtLink to="/privacy-policy">Политика конфиденциальности</NuxtLink>
-            </li>
-          </ul>
-        </nav>
+    <nav class="site-footer__actions" aria-label="Быстрые действия">
+      <NuxtLink to="/form" class="site-footer__action site-footer__action--lead">
+        Оставить заявку
+        <span aria-hidden="true">→</span>
+      </NuxtLink>
+      <div class="site-footer__actions-group">
+        <a
+          href="https://wa.me/79944182338"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="site-footer__action">
+          WhatsApp
+          <span aria-hidden="true">→</span>
+        </a>
+        <a
+          href="https://t.me/etl_spb"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="site-footer__action">
+          Telegram
+          <span aria-hidden="true">→</span>
+        </a>
       </div>
+    </nav>
+
+    <div class="site-footer__main">
+      <section class="site-footer__section site-footer__section--contacts">
+        <div class="site-footer__section-head">
+          <p class="site-footer__heading">Контакты</p>
+          <span class="site-footer__dot" aria-hidden="true" />
+        </div>
+        <p class="site-footer__plain">Санкт-Петербург, Б. Сампсониевский пр., 29Б</p>
+        <a href="tel:+79944182338" class="site-footer__plain-link">+7 (994) 418-23-38</a>
+        <a href="mailto:lenetl@yandex.ru" class="site-footer__plain-link">lenetl@yandex.ru</a>
+        <a
+          href="https://yandex.ru/maps/-/CHGgJTJt"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="site-footer__action site-footer__action--inline">
+          Построить маршрут
+          <span aria-hidden="true">→</span>
+        </a>
+      </section>
+
+      <section class="site-footer__section site-footer__section--schedule">
+        <p class="site-footer__heading site-footer__heading--schedule">График работы</p>
+        <p class="site-footer__plain">Рабочие дни: 9:00 – 18:00</p>
+        <p class="site-footer__plain">Суббота, воскресенье: выходной</p>
+      </section>
+
+      <section class="site-footer__section site-footer__section--links">
+        <div class="site-footer__section-head site-footer__section-head--links">
+          <NuxtLink to="/services" class="site-footer__action site-footer__action--inline">
+            Услуги и цены
+            <span aria-hidden="true">→</span>
+          </NuxtLink>
+          <span class="site-footer__dot" aria-hidden="true" />
+        </div>
+        <NuxtLink to="/equipment" class="site-footer__action site-footer__action--inline">
+          Наше оборудование
+          <span aria-hidden="true">→</span>
+        </NuxtLink>
+      </section>
+    </div>
+
+    <div class="site-footer__bottom">
+      <div class="site-footer__bottom-left">
+        <div class="site-footer__legal">
+          <p>© 2026 ЛенЭТЛ. Электротехническая лаборатория</p>
+          <p>Лицензия № 06-68/ЭЛ-25</p>
+        </div>
+        <p class="site-footer__brand">ЛенЭТЛ</p>
+        <p class="site-footer__credit">
+          Design &amp; Dev by
+          <a
+            href="https://t.me/MoreOrSea"
+            target="_blank"
+            rel="noopener noreferrer">
+            MoreOrSea
+          </a>
+        </p>
+      </div>
+      <nav class="site-footer__bottom-links" aria-label="Правовая информация">
+        <NuxtLink to="/privacy-policy">Политика конфиденциальности</NuxtLink>
+        <NuxtLink to="/data-processing">Правила обработки данных</NuxtLink>
+      </nav>
     </div>
   </footer>
 </template>
@@ -91,298 +93,298 @@
 <style lang="scss" scoped>
 .site-footer {
   position: relative;
-  padding: 28px 0 24px;
-  border-top: 1px solid rgba(100, 181, 246, 0.65);
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 8px 0 28px;
   color: #0d1b2a;
   z-index: 3;
 
-  &__card {
-    padding: 0;
+  @media (min-width: 769px) {
+    max-width: none;
+    padding: 20px 0 40px;
+    --footer-grid-columns: 1fr 1fr 1fr;
+    --footer-grid-gap: 80px;
   }
 
-  &__grid {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr 1fr;
-    gap: 32px;
-    text-align: left;
+  &__actions,
+  &__main,
+  &__bottom {
+    border-bottom: 1px solid rgba(13, 27, 42, 0.18);
+  }
 
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-      gap: 24px;
-      text-align: center;
+  &__actions {
+    padding: 22px 0;
+
+    @media (min-width: 769px) {
+      display: grid;
+      grid-template-columns: var(--footer-grid-columns);
+      gap: var(--footer-grid-gap);
+      align-items: start;
+      padding: 28px 0;
     }
   }
 
-  &__name {
-    margin: 0 0 6px;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #0d1b2a;
-  }
-
-  &__tagline {
-    margin: 0 0 10px;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #0d1b2a;
-    line-height: 1.5;
-  }
-
-  &__copyright {
-    margin: 0 0 16px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: rgba(13, 27, 42, 0.75);
-    line-height: 1.4;
-
-    @media (max-width: 768px) {
-      margin-bottom: 20px;
+  &__actions-group {
+    @media (min-width: 769px) {
+      grid-column: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 18px;
     }
   }
 
-  &__copyright-reg {
-    display: block;
-    margin-top: 4px;
+  &__main {
+    padding: 22px 0;
+
+    @media (min-width: 769px) {
+      display: grid;
+      grid-template-columns: var(--footer-grid-columns);
+      gap: var(--footer-grid-gap);
+      padding: 36px 0;
+    }
   }
 
-  &__contacts-link {
-    display: inline-flex;
+  &__section {
+    & + & {
+      margin-top: 22px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(13, 27, 42, 0.18);
+
+      @media (min-width: 769px) {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+      }
+    }
+
+    &--schedule {
+      @media (min-width: 769px) {
+        padding-left: 0;
+      }
+    }
+
+    &--links {
+      @media (min-width: 769px) {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  }
+
+  &__action {
+    display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #0d47a1;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 18px;
+    color: #0d1b2a;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.3;
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color 0.2s ease;
 
-    i {
-      font-size: 0.75rem;
-      transition: transform 0.2s;
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    span {
+      font-weight: 400;
+      font-size: 1.1rem;
     }
 
     &:hover {
-      color: #1565c0;
+      color: #0d47a1;
+    }
 
-      i {
-        transform: translateX(4px);
+    &--lead {
+      @media (min-width: 769px) {
+        grid-column: 1;
+        width: auto;
+        margin-bottom: 0;
+        justify-content: flex-start;
       }
+    }
+
+    &--inline {
+      margin-top: 16px;
+      margin-bottom: 0;
+
+      @media (min-width: 769px) {
+        margin-top: 0;
+      }
+    }
+
+    &--inline + &--inline {
+      margin-top: 14px;
+
+      @media (min-width: 769px) {
+        margin-top: 18px;
+      }
+    }
+  }
+
+  &__actions-group &__action {
+    @media (min-width: 769px) {
+      width: auto;
+      margin-bottom: 0;
+      justify-content: flex-start;
+    }
+  }
+
+  &__section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    width: 100%;
+
+    &--links {
+      margin-bottom: 0;
+
+      @media (min-width: 769px) {
+        margin-bottom: 18px;
+      }
+    }
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #0d1b2a;
+    flex-shrink: 0;
+
+    @media (min-width: 769px) {
+      display: none;
     }
   }
 
   &__heading {
-    margin: 0 0 14px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #0d47a1;
-  }
-
-  &__contact-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-
-    li {
-      margin-bottom: 10px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
-
-    a {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      color: #0d1b2a;
-      text-decoration: none;
-      font-size: 1rem;
-      font-weight: 600;
-      transition: color 0.2s;
-
-      i {
-        width: 16px;
-        color: #0d47a1;
-        text-align: center;
-      }
-
-      &:hover {
-        color: #0d47a1;
-      }
-    }
-  }
-
-  &__address {
-    margin-top: 4px;
-
-    @media (max-width: 768px) {
-      display: flex;
-      justify-content: center;
-    }
-  }
-
-  &__address-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    max-width: 320px;
-    padding: 12px 14px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid rgba(100, 181, 246, 0.35);
-    box-shadow: 0 4px 14px rgba(13, 27, 42, 0.06);
-    text-decoration: none;
-    transition:
-      background 0.2s ease,
-      border-color 0.2s ease,
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.82);
-      border-color: rgba(13, 71, 161, 0.35);
-      box-shadow: 0 6px 18px rgba(13, 71, 161, 0.12);
-      transform: translateY(-1px);
-
-      .site-footer__address-route {
-        color: #0d47a1;
-
-        i {
-          transform: translateX(3px);
-        }
-      }
-    }
-  }
-
-  &__address-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, rgba(100, 181, 246, 0.25), rgba(25, 118, 210, 0.18));
-    color: #0d47a1;
+    margin: 0 0 16px;
     font-size: 0.95rem;
-  }
-
-  &__address-text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-    text-align: left;
-  }
-
-  &__address-city {
-    font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(13, 71, 161, 0.75);
+    color: #0d1b2a;
+
+    &--schedule {
+      @media (min-width: 769px) {
+        margin-bottom: 16px;
+      }
+    }
   }
 
-  &__address-street {
+  &__section-head &__heading {
+    margin-bottom: 0;
+  }
+
+  &__plain,
+  &__plain-link {
+    display: block;
+    margin: 0 0 8px;
     font-size: 0.98rem;
-    font-weight: 600;
-    line-height: 1.35;
+    font-weight: 400;
+    line-height: 1.45;
     color: #0d1b2a;
   }
 
-  &__address-route {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 4px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: rgba(13, 71, 161, 0.85);
-    transition: color 0.2s ease;
-
-    i {
-      font-size: 0.65rem;
-      transition: transform 0.2s ease;
-    }
-  }
-
-  &__messengers {
-    display: flex;
-    gap: 10px;
-    margin-top: 16px;
-
-    @media (max-width: 768px) {
-      justify-content: center;
-    }
-  }
-
-  &__messenger {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    color: #fff;
+  &__plain-link {
     text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s;
 
     &:hover {
-      transform: translateY(-2px);
+      color: #0d47a1;
     }
+  }
 
-    &--tg {
-      background: linear-gradient(135deg, #2aabee, #229ed9);
-      box-shadow: 0 4px 12px rgba(42, 171, 238, 0.35);
+  &__bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 22px;
+    border-bottom: none;
 
-      &:hover {
-        box-shadow: 0 6px 16px rgba(42, 171, 238, 0.5);
-      }
+    @media (min-width: 769px) {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 40px;
+      padding-top: 28px;
     }
+  }
 
-    &--wa {
-      background: linear-gradient(135deg, #25d366, #128c7e);
-      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
-
-      &:hover {
-        box-shadow: 0 6px 16px rgba(37, 211, 102, 0.5);
-      }
-    }
+  &__bottom-left {
+    min-width: 0;
   }
 
   &__legal {
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
+    font-size: 12px;
+    line-height: 1.55;
+    color: rgba(13, 27, 42, 0.68);
 
-    li {
-      margin-bottom: 10px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
+    p {
+      margin: 0 0 2px;
     }
+  }
+
+  &__brand {
+    margin: 12px 0 0;
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: rgba(13, 27, 42, 0.72);
+    text-transform: uppercase;
+
+    @media (min-width: 769px) {
+      margin-top: 16px;
+      font-size: clamp(2.5rem, 4vw, 3.25rem);
+    }
+  }
+
+  &__credit {
+    margin: 12px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(13, 27, 42, 0.68);
 
     a {
-      color: #0d1b2a;
-      text-decoration: none;
-      font-size: 1rem;
       font-weight: 600;
-      line-height: 1.5;
-      transition: color 0.2s;
+      color: rgba(13, 27, 42, 0.68);
+      text-decoration: underline;
+      text-underline-offset: 2px;
 
       &:hover {
         color: #0d47a1;
       }
     }
+  }
 
-    @media (max-width: 768px) {
-      border-top: 1px solid rgba(100, 181, 246, 0.3);
-      padding-top: 20px;
+  &__bottom-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.45;
+
+    @media (min-width: 769px) {
+      flex-shrink: 0;
+      align-items: flex-end;
+      text-align: right;
+      padding-bottom: 4px;
+    }
+
+    a {
+      color: rgba(13, 27, 42, 0.68);
+      text-decoration: none;
+
+      &:hover {
+        color: #0d47a1;
+      }
     }
   }
 }

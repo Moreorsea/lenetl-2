@@ -6,12 +6,12 @@
     <div class="buttons-container">
       <div class="top-buttons">
         <UiButton
-          to="/services"
+          to="/services#low-voltage"
           label="Испытание электроустановок"
           icon-class="fa-plug" />
 
         <UiButton
-          to="/services"
+          to="/services#protection-gear"
           label="Испытания средств защиты"
           icon-class="fa-shield-alt" />
       </div>
@@ -173,7 +173,7 @@ onUnmounted(() => {
 .top-buttons {
   display: flex;
   justify-content: center;
-  gap: 40px;
+  gap: 14px;
   width: 100%;
   flex-wrap: wrap;
 }

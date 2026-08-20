@@ -128,7 +128,9 @@
     </div>
 
     <!-- Таблица 3: Испытания электроустановок выше 1000 В -->
-    <div class="service-section">
+    <div
+      id="high-voltage"
+      class="service-section">
       <div class="service-title">
         <i class="fas fa-bolt"></i>
         <h2>Испытания электроустановок выше 1000 В</h2>
@@ -181,6 +183,7 @@
   border: 1px solid rgba(100, 181, 246, 0.3);
   position: relative;
   overflow: hidden;
+  scroll-margin-top: 24px;
 
   @media (max-width: 768px) {
     padding: 20px;
