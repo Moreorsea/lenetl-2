@@ -66,7 +66,6 @@
       <div class="site-footer__bottom-left">
         <div class="site-footer__legal">
           <p>© 2026 ЛенЭТЛ. Электротехническая лаборатория</p>
-          <p>Лицензия № 06-68/ЭЛ-25</p>
         </div>
         <p class="site-footer__brand">ЛенЭТЛ</p>
         <p class="site-footer__credit">
@@ -110,6 +109,7 @@
   }
 
   &__actions {
+    border-top: 1px solid rgba(13, 27, 42, 0.18);
     padding: 22px 0;
 
     @media (min-width: 769px) {

@@ -9,7 +9,7 @@ export const siteNavItems: SiteNavItem[] = [
   { to: '/', label: 'Главная', icon: 'fa-home', exact: true },
   { to: '/services', label: 'Услуги', icon: 'fa-clipboard-list' },
   { to: '/equipment', label: 'Оборуд.', icon: 'fa-screwdriver-wrench' },
-  { to: '/contacts', label: 'Контакты', icon: 'fa-phone' },
+  { to: '/contacts', label: 'О компании', icon: 'fa-phone' },
   { to: '/form', label: 'Заявка', icon: 'fa-pen-to-square' },
 ];
 

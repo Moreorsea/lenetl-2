@@ -1,7 +1,6 @@
 <template>
-  <PageHeader title="Наши контакты">
-    Свяжитесь с нами любым удобным способом. Мы всегда готовы ответить на ваши вопросы и обсудить
-    сотрудничество.
+  <PageHeader title="О компании">
+    Основная информация о компании, реквизиты, лицензия и схема проезда.
   </PageHeader>
 
   <div class="contacts-container">
@@ -11,73 +10,10 @@
           <i class="fas fa-building"></i>
           Название организации
         </h3>
-        <p>Общество с ограниченной ответственностью "ЛенЭТЛ"</p>
-      </div>
-
-      <div class="contact-item">
-        <h3>
-          <i class="fas fa-clock"></i>
-          Время работы
-        </h3>
         <p>
-          Понедельник - Пятница: с 9:00 до 18:00
+          Общество с ограниченной ответственностью «ЛенЭТЛ»
           <br />
-          Суббота, Воскресенье: выходной
-        </p>
-      </div>
-
-      <div class="contact-item">
-        <h3>
-          <i class="fas fa-phone"></i>
-          Телефон
-        </h3>
-        <p><a href="tel:+79944182338">+7 (994) 418-23-38</a></p>
-      </div>
-
-      <div class="contact-item">
-        <h3>
-          <i class="fas fa-envelope"></i>
-          Электронная почта
-        </h3>
-        <p><a href="mailto:lenetl@yandex.ru">lenetl@yandex.ru</a></p>
-      </div>
-
-      <div class="contact-item">
-        <h3>
-          <i class="fas fa-comments"></i>
-          Мессенджеры
-        </h3>
-        <div class="messengers">
-          <a
-            href="https://t.me/etl_spb"
-            target="_blank"
-            class="messenger-btn telegram">
-            <i class="fab fa-telegram"></i>
-            Telegram
-          </a>
-          <a
-            href="https://wa.me/79944182338"
-            target="_blank"
-            class="messenger-btn whatsapp">
-            <i class="fab fa-whatsapp"></i>
-            WhatsApp
-          </a>
-        </div>
-      </div>
-
-      <div class="contact-item">
-        <h3>
-          <i class="fas fa-map-marker-alt"></i>
-          Адрес
-        </h3>
-        <p>
           Санкт-Петербург, Большой Сампсониевский проспект, 29Б, пом. 16-Н
-          <br />
-          <a
-            href="https://yandex.ru/maps/-/CHGgJTJt"
-            target="_blank">
-            Построить маршрут
-          </a>
         </p>
       </div>
 
@@ -92,6 +28,23 @@
           КПП: 780201001
           <br />
           ОГРН: 1257800007684
+        </p>
+      </div>
+
+      <div class="contact-item">
+        <h3>
+          <i class="fas fa-certificate"></i>
+          Лицензия
+        </h3>
+        <p>
+          № 06-68/ЭЛ-25
+          <br />
+          <a
+            href="/images/license.jpg"
+            target="_blank"
+            rel="noopener noreferrer">
+            Посмотреть лицензию
+          </a>
         </p>
       </div>
     </div>
@@ -194,38 +147,6 @@
       background: #90caf9;
       transition: width 0.3s;
     }
-  }
-}
-
-.messengers {
-  display: flex;
-  gap: 20px;
-  margin-top: 15px;
-}
-
-.messenger-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 50px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-weight: 600;
-
-  &.telegram {
-    background: linear-gradient(45deg, #0088cc, #34aadc);
-    color: white;
-  }
-
-  &.whatsapp {
-    background: linear-gradient(45deg, #25d366, #128c7e);
-    color: white;
-  }
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }
 }
 
