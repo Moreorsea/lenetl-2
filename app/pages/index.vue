@@ -62,12 +62,12 @@
 </template>
 
 <script lang="ts" setup>
-import servicePhaseZero from '~/assets/images/services/service-phase-zero.png'
-import serviceUzo from '~/assets/images/services/service-uzo.png'
-import serviceBreaker from '~/assets/images/services/service-breaker.png'
-import serviceInsulation from '~/assets/images/services/service-insulation.png'
-import serviceGrounding from '~/assets/images/services/service-grounding.png'
-import serviceBonding from '~/assets/images/services/service-bonding.png'
+import servicePhaseZero from '~/assets/images/services/service-phase-zero.webp'
+import serviceUzo from '~/assets/images/services/service-uzo.webp'
+import serviceBreaker from '~/assets/images/services/service-breaker.webp'
+import serviceInsulation from '~/assets/images/services/service-insulation.webp'
+import serviceGrounding from '~/assets/images/services/service-grounding.webp'
+import serviceBonding from '~/assets/images/services/service-bonding.webp'
 
 type HomeSlide = {
   title: string;
