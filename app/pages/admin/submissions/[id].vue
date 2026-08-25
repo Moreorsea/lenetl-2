@@ -170,12 +170,14 @@ const errorMessage = computed(() => {
     align-items: center;
     gap: 8px;
     margin-bottom: 24px;
-    color: #64b5f6;
+    color: var(--lenet-body-text);
     text-decoration: none;
     font-size: 0.95rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
 
     &:hover {
-      text-decoration: underline;
+      color: var(--lenet-accent);
     }
 
     @media (max-width: 768px) {
@@ -190,12 +192,13 @@ const errorMessage = computed(() => {
     h1 {
       margin: 0 0 6px;
       font-size: 1.75rem;
-      color: #e3f2fd;
+      font-weight: 700;
+      color: var(--lenet-body-text);
     }
 
     p {
       margin: 0;
-      color: #94a3b8;
+      color: var(--lenet-text-muted);
     }
 
     @media (max-width: 768px) {
@@ -214,13 +217,15 @@ const errorMessage = computed(() => {
   &__state {
     padding: 48px;
     text-align: center;
-    color: #94a3b8;
-    background: rgba(30, 41, 59, 0.5);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--lenet-text-muted);
+    background: #fff;
+    border: 1px solid rgba(13, 27, 42, 0.08);
+    box-shadow: 0 10px 24px -10px rgba(13, 27, 42, 0.1);
 
     &--error {
-      color: #fca5a5;
+      color: #c62828;
+      background: rgba(198, 40, 40, 0.04);
+      border-color: rgba(198, 40, 40, 0.18);
     }
 
     @media (max-width: 768px) {
@@ -246,10 +251,10 @@ const errorMessage = computed(() => {
   }
 
   &__card {
-    padding: 20px;
-    border-radius: 12px;
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 24px;
+    background: #fff;
+    border: 1px solid rgba(13, 27, 42, 0.08);
+    box-shadow: 0 10px 24px -10px rgba(13, 27, 42, 0.1);
 
     &--wide {
       min-width: 0;
@@ -258,7 +263,8 @@ const errorMessage = computed(() => {
     h2 {
       margin: 0 0 16px;
       font-size: 1.1rem;
-      color: #e3f2fd;
+      font-weight: 700;
+      color: var(--lenet-body-text);
     }
 
     @media (max-width: 768px) {
@@ -272,7 +278,7 @@ const errorMessage = computed(() => {
   }
 
   &__count {
-    color: #94a3b8;
+    color: var(--lenet-text-muted);
     font-weight: 400;
     font-size: 0.95rem;
   }
@@ -285,28 +291,29 @@ const errorMessage = computed(() => {
     & + & {
       margin-top: 14px;
       padding-top: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-top: 1px solid rgba(13, 27, 42, 0.08);
     }
 
     dt {
       margin-bottom: 4px;
-      font-size: 0.8rem;
-      color: #94a3b8;
+      font-size: 0.78rem;
+      color: rgba(13, 27, 42, 0.55);
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      font-weight: 700;
     }
 
     dd {
       margin: 0;
-      color: #e2e8f0;
+      color: var(--lenet-body-text);
       word-break: break-word;
 
       a {
-        color: #64b5f6;
+        color: var(--lenet-primary);
         text-decoration: none;
 
         &:hover {
-          text-decoration: underline;
+          color: var(--lenet-accent);
         }
       }
     }
@@ -317,12 +324,12 @@ const errorMessage = computed(() => {
     white-space: pre-wrap;
     word-break: break-word;
     line-height: 1.6;
-    color: #e2e8f0;
+    color: var(--lenet-text-muted);
   }
 
   &__empty {
     margin: 0;
-    color: #94a3b8;
+    color: var(--lenet-text-muted);
   }
 
   &__files {
@@ -332,10 +339,10 @@ const errorMessage = computed(() => {
 }
 
 .submission-file {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  border: 1px solid rgba(13, 27, 42, 0.08);
   overflow: hidden;
-  background: rgba(15, 23, 42, 0.5);
+  background: #fff;
+  box-shadow: 0 8px 20px -10px rgba(13, 27, 42, 0.1);
 
   &__header {
     display: flex;
@@ -343,8 +350,8 @@ const errorMessage = computed(() => {
     justify-content: space-between;
     gap: 12px;
     padding: 12px 16px;
-    background: rgba(15, 23, 42, 0.8);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--lenet-header-bg);
+    border-bottom: 1px solid rgba(13, 27, 42, 0.08);
 
     @media (max-width: 768px) {
       flex-direction: column;
@@ -353,8 +360,9 @@ const errorMessage = computed(() => {
   }
 
   &__name {
-    color: #e2e8f0;
+    color: var(--lenet-body-text);
     font-size: 0.95rem;
+    font-weight: 600;
     word-break: break-all;
   }
 
@@ -362,26 +370,27 @@ const errorMessage = computed(() => {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: #64b5f6;
+    color: var(--lenet-body-text);
     text-decoration: none;
     white-space: nowrap;
     font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.2s ease;
 
     &:hover {
-      text-decoration: underline;
+      color: var(--lenet-accent);
     }
   }
 
   &__preview {
     padding: 12px;
-    background: rgba(0, 0, 0, 0.2);
+    background: #fff;
 
     img {
       display: block;
       max-width: 100%;
       max-height: 480px;
       margin: 0 auto;
-      border-radius: 6px;
     }
 
     &--pdf iframe {
@@ -389,7 +398,6 @@ const errorMessage = computed(() => {
       width: 100%;
       height: 560px;
       border: none;
-      border-radius: 6px;
       background: #fff;
 
       @media (max-width: 768px) {
@@ -404,18 +412,20 @@ const errorMessage = computed(() => {
     align-items: center;
     gap: 10px;
     padding: 32px 16px;
-    color: #94a3b8;
+    color: var(--lenet-text-muted);
 
     i {
       font-size: 2rem;
+      color: var(--lenet-accent);
     }
 
     a {
-      color: #64b5f6;
+      color: var(--lenet-primary);
       text-decoration: none;
+      font-weight: 600;
 
       &:hover {
-        text-decoration: underline;
+        color: var(--lenet-accent);
       }
     }
   }

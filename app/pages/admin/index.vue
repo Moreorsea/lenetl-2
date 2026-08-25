@@ -1,6 +1,18 @@
 <template>
   <div class="admin-login">
+    <AdminLoginNikitosEasterEgg
+      :visible="showNikitosEasterEgg"
+      :session-key="nikitosSessionKey" />
+
+    <div
+      v-if="checkingSession"
+      class="admin-login__checking"
+      aria-live="polite">
+      <i class="fas fa-spinner fa-spin" />
+    </div>
+
     <form
+      v-else
       class="admin-login__card"
       :class="{ 'admin-login__card--loading': isLoading }"
       :aria-busy="isLoading"
@@ -90,13 +102,38 @@ const isPasswordVisible = ref(false)
 const errorMessage = ref('')
 const isLoading = ref(false)
 const loadingMessage = ref('Проверяем данные...')
+const failedAttempts = ref(0)
+const showNikitosEasterEgg = ref(false)
+const nikitosSessionKey = ref(0)
+const checkingSession = ref(true)
 
-onMounted(async () => {
-  try {
-    await $fetch('/api/admin/session')
-    await navigateTo('/admin/submissions')
-  } catch {
-    // not logged in
+const requestFetch = useRequestFetch()
+
+try {
+  await requestFetch('/api/admin/session')
+  await navigateTo('/admin/submissions')
+} catch {
+  checkingSession.value = false
+}
+
+let nikitosHideTimer: ReturnType<typeof setTimeout> | undefined
+
+const triggerNikitosEasterEgg = () => {
+  nikitosSessionKey.value += 1
+  showNikitosEasterEgg.value = true
+
+  if (nikitosHideTimer) {
+    clearTimeout(nikitosHideTimer)
+  }
+
+  nikitosHideTimer = setTimeout(() => {
+    showNikitosEasterEgg.value = false
+  }, 7000)
+}
+
+onUnmounted(() => {
+  if (nikitosHideTimer) {
+    clearTimeout(nikitosHideTimer)
   }
 })
 
@@ -118,6 +155,12 @@ const handleLogin = async () => {
     loadingMessage.value = 'Вход выполнен, перенаправляем...'
     await navigateTo('/admin/submissions')
   } catch (error: unknown) {
+    failedAttempts.value += 1
+
+    if (failedAttempts.value >= 3) {
+      triggerNikitosEasterEgg()
+    }
+
     if (error && typeof error === 'object' && 'data' in error) {
       const data = (error as { data?: { message?: string } }).data
       errorMessage.value = data?.message ?? 'Неверный логин или пароль'
@@ -136,40 +179,52 @@ const handleLogin = async () => {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: #0f172a;
+  background: var(--lenet-header-bg);
 
   @media (max-width: 768px) {
+    min-height: 100dvh;
     padding: 16px;
-    align-items: flex-start;
-    padding-top: 48px;
+  }
+
+  &__checking {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+    color: var(--lenet-text-muted);
+
+    i {
+      font-size: 1.75rem;
+      color: var(--lenet-accent);
+    }
   }
 
   &__card {
     position: relative;
     width: 100%;
-    max-width: 400px;
-    padding: 32px;
-    border-radius: 16px;
-    background: rgba(30, 41, 59, 0.85);
-    border: 1px solid rgba(100, 181, 246, 0.25);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    max-width: 420px;
+    padding: 36px 32px;
+    border-radius: 0;
+    background: #fff;
+    border: 1px solid rgba(13, 27, 42, 0.08);
+    box-shadow: 0 12px 28px -8px rgba(13, 27, 42, 0.14);
     transition: border-color 0.2s ease;
 
     &--loading {
-      border-color: rgba(100, 181, 246, 0.45);
+      border-color: rgba(255, 183, 3, 0.45);
       pointer-events: none;
     }
 
     @media (max-width: 768px) {
       padding: 24px 20px;
-      border-radius: 14px;
     }
   }
 
   &__title {
     margin: 0 0 8px;
     font-size: 1.5rem;
-    color: #e3f2fd;
+    font-weight: 700;
+    color: var(--lenet-body-text);
 
     @media (max-width: 768px) {
       font-size: 1.3rem;
@@ -178,7 +233,7 @@ const handleLogin = async () => {
 
   &__subtitle {
     margin: 0 0 28px;
-    color: #94a3b8;
+    color: var(--lenet-text-muted);
     font-size: 0.95rem;
 
     @media (max-width: 768px) {
@@ -196,21 +251,25 @@ const handleLogin = async () => {
     span,
     .admin-login__label {
       font-size: 0.85rem;
-      color: #cbd5e1;
+      font-weight: 600;
+      color: var(--lenet-body-text);
     }
 
     input {
       width: 100%;
       padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(15, 23, 42, 0.8);
-      color: #fff;
+      border-radius: 6px;
+      border: 1px solid rgba(13, 27, 42, 0.12);
+      background: #f5f7f9;
+      color: var(--lenet-body-text);
       font-size: 1rem;
+      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 
       &:focus {
         outline: none;
-        border-color: rgba(100, 181, 246, 0.6);
+        border-color: var(--lenet-accent);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.18);
       }
 
       &:disabled {
@@ -246,9 +305,9 @@ const handleLogin = async () => {
     width: 32px;
     height: 32px;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     background: transparent;
-    color: #94a3b8;
+    color: var(--lenet-text-muted);
     cursor: pointer;
     transition: color 0.2s ease, background-color 0.2s ease;
 
@@ -259,8 +318,8 @@ const handleLogin = async () => {
     }
 
     &:hover {
-      color: #e3f2fd;
-      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--lenet-body-text);
+      background-color: rgba(13, 27, 42, 0.06);
     }
 
     &:disabled {
@@ -271,24 +330,32 @@ const handleLogin = async () => {
 
   &__error {
     margin: 0 0 16px;
-    color: #fca5a5;
+    padding: 10px 12px;
+    color: #c62828;
     font-size: 0.9rem;
+    background: rgba(198, 40, 40, 0.08);
+    border: 1px solid rgba(198, 40, 40, 0.18);
+    border-radius: 6px;
   }
 
   &__submit {
     width: 100%;
     padding: 12px;
     border: none;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #1976d2, #1565c0);
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 600;
+    border-radius: 6px;
+    background: var(--lenet-accent);
+    color: #1a1a1a;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 
     &:hover:not(:disabled) {
-      opacity: 0.9;
+      filter: brightness(0.96);
+      box-shadow: 0 8px 20px rgba(255, 183, 3, 0.35);
+      transform: translateY(-1px);
     }
 
     &:disabled {
@@ -312,7 +379,7 @@ const handleLogin = async () => {
     align-items: center;
     justify-content: center;
     border-radius: inherit;
-    background: rgba(15, 23, 42, 0.72);
+    background: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
   }
@@ -327,14 +394,14 @@ const handleLogin = async () => {
 
     i {
       font-size: 1.75rem;
-      color: #64b5f6;
+      color: var(--lenet-accent);
     }
 
     p {
       margin: 0;
       font-size: 0.95rem;
       font-weight: 500;
-      color: #e3f2fd;
+      color: var(--lenet-body-text);
       line-height: 1.4;
     }
   }

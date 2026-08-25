@@ -46,8 +46,8 @@ const logout = async () => {
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background: #0f172a;
-  color: #e2e8f0;
+  background: var(--lenet-bg);
+  color: var(--lenet-body-text);
 }
 
 .admin-sidebar {
@@ -56,19 +56,20 @@ const logout = async () => {
   display: flex;
   flex-direction: column;
   padding: 24px 16px;
-  background: rgba(15, 23, 42, 0.95);
-  border-right: 1px solid rgba(100, 181, 246, 0.2);
-  backdrop-filter: blur(12px);
+  background: var(--lenet-header-bg);
+  border-right: 1px solid rgba(13, 27, 42, 0.1);
 
   &__brand {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 0 12px 24px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #e3f2fd;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--lenet-body-text);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    border-bottom: 1px solid rgba(13, 27, 42, 0.08);
     margin-bottom: 16px;
   }
 
@@ -88,10 +89,10 @@ const logout = async () => {
     align-items: center;
     gap: 10px;
     padding: 12px 14px;
-    border-radius: 10px;
-    color: #94a3b8;
+    border-radius: 8px;
+    color: var(--lenet-text-muted);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, background 0.2s ease;
 
     i {
       width: 18px;
@@ -99,14 +100,18 @@ const logout = async () => {
     }
 
     &:hover {
-      background: rgba(100, 181, 246, 0.1);
-      color: #e3f2fd;
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--lenet-body-text);
     }
 
     &--active {
-      background: rgba(25, 118, 210, 0.25);
-      color: #fff;
-      border: 1px solid rgba(100, 181, 246, 0.35);
+      background: #fff;
+      color: var(--lenet-body-text);
+      box-shadow: 0 8px 20px -10px rgba(13, 27, 42, 0.18);
+
+      i {
+        color: var(--lenet-accent);
+      }
     }
   }
 
@@ -116,17 +121,17 @@ const logout = async () => {
     gap: 10px;
     margin-top: auto;
     padding: 12px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    background: transparent;
-    color: #94a3b8;
+    border: 1px solid rgba(13, 27, 42, 0.12);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--lenet-text-muted);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 
     &:hover {
-      color: #fca5a5;
-      border-color: rgba(252, 165, 165, 0.3);
-      background: rgba(252, 165, 165, 0.08);
+      color: #c62828;
+      border-color: rgba(198, 40, 40, 0.25);
+      background: rgba(198, 40, 40, 0.04);
     }
   }
 }
@@ -150,7 +155,7 @@ const logout = async () => {
     gap: 8px;
     padding: 12px 16px;
     border-right: none;
-    border-bottom: 1px solid rgba(100, 181, 246, 0.2);
+    border-bottom: 1px solid rgba(13, 27, 42, 0.1);
   }
 
   .admin-sidebar__brand {
@@ -159,6 +164,7 @@ const logout = async () => {
     padding: 0;
     margin: 0;
     border-bottom: none;
+    font-size: 0.95rem;
   }
 
   .admin-sidebar__title {
