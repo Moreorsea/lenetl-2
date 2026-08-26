@@ -11,6 +11,7 @@ import {
   PHONE_MASK_ERROR,
   validateFormFiles,
 } from '../../shared/utils/formValidation'
+import { notifyNewSubmission } from '../utils/mail'
 
 export default defineEventHandler(async (event) => {
   const formData = await readMultipartFormData(event)
@@ -122,6 +123,15 @@ export default defineEventHandler(async (event) => {
     }
 
     console.log(`✅ Заявка сохранена в БД с ID: ${savedRecord.id}`)
+
+    notifyNewSubmission({
+      id: savedRecord.id,
+      name: savedRecord.name,
+      phone: savedRecord.phone,
+      email: savedRecord.email,
+      message: savedRecord.message,
+      filesCount: pendingFiles.length,
+    })
 
     return {
       success: true,

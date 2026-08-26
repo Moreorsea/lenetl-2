@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   FormSubmission: 'FormSubmission',
+  SubmissionHistory: 'SubmissionHistory',
   SubmissionFile: 'SubmissionFile'
 } as const
 
@@ -401,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "formSubmission" | "submissionFile"
+    modelProps: "formSubmission" | "submissionHistory" | "submissionFile"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -468,6 +469,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.FormSubmissionCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.FormSubmissionCountAggregateOutputType> | number
+        }
+      }
+    }
+    SubmissionHistory: {
+      payload: Prisma.$SubmissionHistoryPayload<ExtArgs>
+      fields: Prisma.SubmissionHistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SubmissionHistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionHistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SubmissionHistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionHistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.SubmissionHistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionHistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SubmissionHistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionHistoryPayload>
+        }
+        findMany: {
+          args: Prisma.SubmissionHistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionHistoryPayload>[]
+        }
+        create: {
+          args: Prisma.SubmissionHistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionHistoryPayload>
+        }
+        createMany: {
+          args: Prisma.SubmissionHistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.SubmissionHistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionHistoryPayload>
+        }
+        update: {
+          args: Prisma.SubmissionHistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionHistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.SubmissionHistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SubmissionHistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.SubmissionHistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubmissionHistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.SubmissionHistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSubmissionHistory>
+        }
+        groupBy: {
+          args: Prisma.SubmissionHistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubmissionHistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SubmissionHistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubmissionHistoryCountAggregateOutputType> | number
         }
       }
     }
@@ -583,12 +650,34 @@ export const FormSubmissionScalarFieldEnum = {
   email: 'email',
   message: 'message',
   consent: 'consent',
+  status: 'status',
+  managerComment: 'managerComment',
+  deletedAt: 'deletedAt',
   files: 'files',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type FormSubmissionScalarFieldEnum = (typeof FormSubmissionScalarFieldEnum)[keyof typeof FormSubmissionScalarFieldEnum]
+
+
+export const SubmissionHistoryScalarFieldEnum = {
+  id: 'id',
+  originalSubmissionId: 'originalSubmissionId',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  message: 'message',
+  consent: 'consent',
+  status: 'status',
+  managerComment: 'managerComment',
+  filesCount: 'filesCount',
+  submittedAt: 'submittedAt',
+  deletedAt: 'deletedAt',
+  archivedAt: 'archivedAt'
+} as const
+
+export type SubmissionHistoryScalarFieldEnum = (typeof SubmissionHistoryScalarFieldEnum)[keyof typeof SubmissionHistoryScalarFieldEnum]
 
 
 export const SubmissionFileScalarFieldEnum = {
@@ -650,10 +739,22 @@ export const FormSubmissionOrderByRelevanceFieldEnum = {
   name: 'name',
   phone: 'phone',
   email: 'email',
-  message: 'message'
+  message: 'message',
+  managerComment: 'managerComment'
 } as const
 
 export type FormSubmissionOrderByRelevanceFieldEnum = (typeof FormSubmissionOrderByRelevanceFieldEnum)[keyof typeof FormSubmissionOrderByRelevanceFieldEnum]
+
+
+export const SubmissionHistoryOrderByRelevanceFieldEnum = {
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  message: 'message',
+  managerComment: 'managerComment'
+} as const
+
+export type SubmissionHistoryOrderByRelevanceFieldEnum = (typeof SubmissionHistoryOrderByRelevanceFieldEnum)[keyof typeof SubmissionHistoryOrderByRelevanceFieldEnum]
 
 
 export const SubmissionFileOrderByRelevanceFieldEnum = {
@@ -694,6 +795,20 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'SubmissionStatus'
+ */
+export type EnumSubmissionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmissionStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime'
+ */
+export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -704,13 +819,6 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
-    
-
-
-/**
- * Reference to a field of type 'DateTime'
- */
-export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
     
 
 
@@ -831,6 +939,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   formSubmission?: Prisma.FormSubmissionOmit
+  submissionHistory?: Prisma.SubmissionHistoryOmit
   submissionFile?: Prisma.SubmissionFileOmit
 }
 

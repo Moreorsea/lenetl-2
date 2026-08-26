@@ -6,19 +6,40 @@
         <span class="admin-sidebar__title">ЛенЭТЛ Admin</span>
       </div>
 
-      <nav class="admin-sidebar__nav">
+      <nav class="admin-sidebar__nav admin-sidebar__nav--desktop">
         <NuxtLink
           to="/admin/submissions"
           class="admin-sidebar__link"
-          :class="{ 'admin-sidebar__link--active': isSubmissionsSection }">
+          :class="{ 'admin-sidebar__link--active': isActiveSubmissions }">
           <i class="fas fa-inbox"></i>
           <span>Заявки</span>
+        </NuxtLink>
+        <NuxtLink
+          to="/admin/submissions/deleted"
+          class="admin-sidebar__link"
+          :class="{ 'admin-sidebar__link--active': isDeletedSubmissions }">
+          <span class="admin-sidebar__icon-wrap">
+            <i class="fas fa-trash-alt"></i>
+            <span
+              v-if="counts.deleted > 0"
+              class="admin-sidebar__badge">
+              {{ counts.deleted }}
+            </span>
+          </span>
+          <span>Удалённые</span>
+        </NuxtLink>
+        <NuxtLink
+          to="/admin/submissions/history"
+          class="admin-sidebar__link"
+          :class="{ 'admin-sidebar__link--active': isHistorySubmissions }">
+          <i class="fas fa-history"></i>
+          <span>История заявок</span>
         </NuxtLink>
       </nav>
 
       <button
         type="button"
-        class="admin-sidebar__logout"
+        class="admin-sidebar__logout admin-sidebar__logout--desktop"
         @click="logout">
         <i class="fas fa-sign-out-alt"></i>
         <span>Выйти</span>
@@ -28,13 +49,25 @@
     <main class="admin-main">
       <slot />
     </main>
+
+    <AdminMobileBottomNav />
   </div>
 </template>
 
 <script lang="ts" setup>
 const route = useRoute()
+const { counts, refreshSubmissionCounts } = useSubmissionCounts()
+const requestFetch = useRequestFetch()
 
-const isSubmissionsSection = computed(() => route.path.startsWith('/admin/submissions'))
+await useAsyncData('admin-submission-counts', () => refreshSubmissionCounts(requestFetch))
+
+const isDeletedSubmissions = computed(() => route.path.startsWith('/admin/submissions/deleted'))
+const isHistorySubmissions = computed(() => route.path.startsWith('/admin/submissions/history'))
+
+const isActiveSubmissions = computed(() => {
+  if (isDeletedSubmissions.value || isHistorySubmissions.value) return false
+  return route.path === '/admin/submissions' || /^\/admin\/submissions\/\d+$/.test(route.path)
+})
 
 const logout = async () => {
   await $fetch('/api/admin/logout', { method: 'POST' })
@@ -115,6 +148,31 @@ const logout = async () => {
     }
   }
 
+  &__icon-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    flex-shrink: 0;
+  }
+
+  &__badge {
+    position: absolute;
+    top: -7px;
+    right: -10px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--lenet-body-text);
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+  }
+
   &__logout {
     display: flex;
     align-items: center;
@@ -152,7 +210,6 @@ const logout = async () => {
     width: 100%;
     flex-direction: row;
     align-items: center;
-    gap: 8px;
     padding: 12px 16px;
     border-right: none;
     border-bottom: 1px solid rgba(13, 27, 42, 0.1);
@@ -173,30 +230,13 @@ const logout = async () => {
     white-space: nowrap;
   }
 
-  .admin-sidebar__nav {
-    flex: 0 0 auto;
-    flex-direction: row;
-  }
-
-  .admin-sidebar__link {
-    padding: 10px 12px;
-
-    span {
-      display: none;
-    }
-  }
-
-  .admin-sidebar__logout {
-    margin-top: 0;
-    padding: 10px 12px;
-
-    span {
-      display: none;
-    }
+  .admin-sidebar__nav--desktop,
+  .admin-sidebar__logout--desktop {
+    display: none;
   }
 
   .admin-main {
-    padding: 16px;
+    padding: 16px 16px calc(88px + env(safe-area-inset-bottom, 0px));
   }
 }
 </style>

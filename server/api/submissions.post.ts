@@ -10,6 +10,7 @@ import {
   PHONE_MASK_ERROR,
   validateFormFiles,
 } from '../../shared/utils/formValidation'
+import { notifyNewSubmission } from '../utils/mail'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -126,6 +127,15 @@ export default defineEventHandler(async (event) => {
         },
       })
     }
+
+    notifyNewSubmission({
+      id: submission.id,
+      name: submission.name,
+      phone: submission.phone,
+      email: submission.email,
+      message: submission.message,
+      filesCount: pendingFiles.length,
+    })
 
     return {
       success: true,

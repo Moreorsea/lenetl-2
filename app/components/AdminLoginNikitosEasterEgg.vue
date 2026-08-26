@@ -65,7 +65,7 @@ const buildBottomRow = (count: number, lift: number): FigurePlacement[] => {
     horizontal,
     offset: -(lift + randomBetween(0, 6)),
     lift: 0,
-    size: randomBetween(0.32, 1.15),
+    size: randomBetween(0.5, 1.4),
     mirrored: Math.random() > 0.4,
     delay: 0.08 + index * 0.11 + randomBetween(0, 0.3),
   }))
@@ -90,7 +90,7 @@ const buildSideStack = (zone: 'left' | 'right', mobile: boolean): FigurePlacemen
     horizontal: zone === 'left' ? 0 : 100,
     offset: randomBetween(2, 12) + index * randomBetween(2, 6),
     lift: index * randomBetween(10, 18),
-    size: randomBetween(0.55, 1.05),
+    size: randomBetween(0.75, 1.3),
     mirrored: zone === 'right',
     delay: index * 0.2 + randomBetween(0, 0.15),
   }))
@@ -134,13 +134,13 @@ const figureStyle = (figure: FigurePlacement) => ({
   &__figure {
     position: absolute;
     bottom: 0;
-    width: calc(min(20vw, 190px) * var(--nikitos-size, 1));
-    max-height: calc(58vh * var(--nikitos-size, 1));
+    width: calc(min(30vw, 300px) * var(--nikitos-size, 1));
+    max-height: calc(72vh * var(--nikitos-size, 1));
     object-fit: contain;
     object-position: center bottom;
     animation: nikitos-blink 2.2s ease-in-out infinite;
     animation-delay: var(--nikitos-delay, 0s);
-    filter: drop-shadow(0 8px 18px rgba(13, 27, 42, 0.22));
+    filter: brightness(0);
 
     &--left {
       left: 0;
@@ -167,8 +167,8 @@ const figureStyle = (figure: FigurePlacement) => ({
     }
 
     @media (max-width: 768px) {
-      width: calc(min(18vw, 90px) * var(--nikitos-size, 1));
-      max-height: calc(38vh * var(--nikitos-size, 1));
+      width: calc(min(26vw, 140px) * var(--nikitos-size, 1));
+      max-height: calc(48vh * var(--nikitos-size, 1));
     }
   }
 
@@ -213,12 +213,12 @@ const figureStyle = (figure: FigurePlacement) => ({
   0%,
   100% {
     opacity: 1;
-    filter: drop-shadow(0 8px 18px rgba(13, 27, 42, 0.22)) brightness(1);
+    filter: brightness(0);
   }
 
   50% {
-    opacity: 0.35;
-    filter: drop-shadow(0 8px 18px rgba(13, 27, 42, 0.12)) brightness(1.08);
+    opacity: 0.2;
+    filter: brightness(0);
   }
 }
 

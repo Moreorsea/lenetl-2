@@ -41,6 +41,9 @@ export type FormSubmissionMinAggregateOutputType = {
   email: string | null
   message: string | null
   consent: boolean | null
+  status: $Enums.SubmissionStatus | null
+  managerComment: string | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +55,9 @@ export type FormSubmissionMaxAggregateOutputType = {
   email: string | null
   message: string | null
   consent: boolean | null
+  status: $Enums.SubmissionStatus | null
+  managerComment: string | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,6 +69,9 @@ export type FormSubmissionCountAggregateOutputType = {
   email: number
   message: number
   consent: number
+  status: number
+  managerComment: number
+  deletedAt: number
   files: number
   createdAt: number
   updatedAt: number
@@ -85,6 +94,9 @@ export type FormSubmissionMinAggregateInputType = {
   email?: true
   message?: true
   consent?: true
+  status?: true
+  managerComment?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -96,6 +108,9 @@ export type FormSubmissionMaxAggregateInputType = {
   email?: true
   message?: true
   consent?: true
+  status?: true
+  managerComment?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -107,6 +122,9 @@ export type FormSubmissionCountAggregateInputType = {
   email?: true
   message?: true
   consent?: true
+  status?: true
+  managerComment?: true
+  deletedAt?: true
   files?: true
   createdAt?: true
   updatedAt?: true
@@ -206,6 +224,9 @@ export type FormSubmissionGroupByOutputType = {
   email: string
   message: string
   consent: boolean
+  status: $Enums.SubmissionStatus
+  managerComment: string | null
+  deletedAt: Date | null
   files: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
@@ -241,6 +262,9 @@ export type FormSubmissionWhereInput = {
   email?: Prisma.StringFilter<"FormSubmission"> | string
   message?: Prisma.StringFilter<"FormSubmission"> | string
   consent?: Prisma.BoolFilter<"FormSubmission"> | boolean
+  status?: Prisma.EnumSubmissionStatusFilter<"FormSubmission"> | $Enums.SubmissionStatus
+  managerComment?: Prisma.StringNullableFilter<"FormSubmission"> | string | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"FormSubmission"> | Date | string | null
   files?: Prisma.JsonNullableFilter<"FormSubmission">
   createdAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
@@ -254,6 +278,9 @@ export type FormSubmissionOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   message?: Prisma.SortOrder
   consent?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  managerComment?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   files?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -271,6 +298,9 @@ export type FormSubmissionWhereUniqueInput = Prisma.AtLeast<{
   email?: Prisma.StringFilter<"FormSubmission"> | string
   message?: Prisma.StringFilter<"FormSubmission"> | string
   consent?: Prisma.BoolFilter<"FormSubmission"> | boolean
+  status?: Prisma.EnumSubmissionStatusFilter<"FormSubmission"> | $Enums.SubmissionStatus
+  managerComment?: Prisma.StringNullableFilter<"FormSubmission"> | string | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"FormSubmission"> | Date | string | null
   files?: Prisma.JsonNullableFilter<"FormSubmission">
   createdAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"FormSubmission"> | Date | string
@@ -284,6 +314,9 @@ export type FormSubmissionOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   message?: Prisma.SortOrder
   consent?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  managerComment?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   files?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -304,6 +337,9 @@ export type FormSubmissionScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"FormSubmission"> | string
   message?: Prisma.StringWithAggregatesFilter<"FormSubmission"> | string
   consent?: Prisma.BoolWithAggregatesFilter<"FormSubmission"> | boolean
+  status?: Prisma.EnumSubmissionStatusWithAggregatesFilter<"FormSubmission"> | $Enums.SubmissionStatus
+  managerComment?: Prisma.StringNullableWithAggregatesFilter<"FormSubmission"> | string | null
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"FormSubmission"> | Date | string | null
   files?: Prisma.JsonNullableWithAggregatesFilter<"FormSubmission">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"FormSubmission"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"FormSubmission"> | Date | string
@@ -315,6 +351,9 @@ export type FormSubmissionCreateInput = {
   email: string
   message: string
   consent: boolean
+  status?: $Enums.SubmissionStatus
+  managerComment?: string | null
+  deletedAt?: Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -328,6 +367,9 @@ export type FormSubmissionUncheckedCreateInput = {
   email: string
   message: string
   consent: boolean
+  status?: $Enums.SubmissionStatus
+  managerComment?: string | null
+  deletedAt?: Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -340,6 +382,9 @@ export type FormSubmissionUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
+  managerComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -353,6 +398,9 @@ export type FormSubmissionUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
+  managerComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -366,6 +414,9 @@ export type FormSubmissionCreateManyInput = {
   email: string
   message: string
   consent: boolean
+  status?: $Enums.SubmissionStatus
+  managerComment?: string | null
+  deletedAt?: Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -377,6 +428,9 @@ export type FormSubmissionUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
+  managerComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -389,6 +443,9 @@ export type FormSubmissionUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
+  managerComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -407,6 +464,9 @@ export type FormSubmissionCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   message?: Prisma.SortOrder
   consent?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  managerComment?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   files?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -423,6 +483,9 @@ export type FormSubmissionMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   message?: Prisma.SortOrder
   consent?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  managerComment?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -434,6 +497,9 @@ export type FormSubmissionMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   message?: Prisma.SortOrder
   consent?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  managerComment?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -453,6 +519,18 @@ export type StringFieldUpdateOperationsInput = {
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type EnumSubmissionStatusFieldUpdateOperationsInput = {
+  set?: $Enums.SubmissionStatus
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -487,6 +565,9 @@ export type FormSubmissionCreateWithoutAttachmentsInput = {
   email: string
   message: string
   consent: boolean
+  status?: $Enums.SubmissionStatus
+  managerComment?: string | null
+  deletedAt?: Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -499,6 +580,9 @@ export type FormSubmissionUncheckedCreateWithoutAttachmentsInput = {
   email: string
   message: string
   consent: boolean
+  status?: $Enums.SubmissionStatus
+  managerComment?: string | null
+  deletedAt?: Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -526,6 +610,9 @@ export type FormSubmissionUpdateWithoutAttachmentsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
+  managerComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -538,6 +625,9 @@ export type FormSubmissionUncheckedUpdateWithoutAttachmentsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   consent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumSubmissionStatusFieldUpdateOperationsInput | $Enums.SubmissionStatus
+  managerComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -581,6 +671,9 @@ export type FormSubmissionSelect<ExtArgs extends runtime.Types.Extensions.Intern
   email?: boolean
   message?: boolean
   consent?: boolean
+  status?: boolean
+  managerComment?: boolean
+  deletedAt?: boolean
   files?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -597,12 +690,15 @@ export type FormSubmissionSelectScalar = {
   email?: boolean
   message?: boolean
   consent?: boolean
+  status?: boolean
+  managerComment?: boolean
+  deletedAt?: boolean
   files?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type FormSubmissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "email" | "message" | "consent" | "files" | "createdAt" | "updatedAt", ExtArgs["result"]["formSubmission"]>
+export type FormSubmissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "email" | "message" | "consent" | "status" | "managerComment" | "deletedAt" | "files" | "createdAt" | "updatedAt", ExtArgs["result"]["formSubmission"]>
 export type FormSubmissionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attachments?: boolean | Prisma.FormSubmission$attachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.FormSubmissionCountOutputTypeDefaultArgs<ExtArgs>
@@ -620,6 +716,9 @@ export type $FormSubmissionPayload<ExtArgs extends runtime.Types.Extensions.Inte
     email: string
     message: string
     consent: boolean
+    status: $Enums.SubmissionStatus
+    managerComment: string | null
+    deletedAt: Date | null
     files: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
@@ -999,6 +1098,9 @@ export interface FormSubmissionFieldRefs {
   readonly email: Prisma.FieldRef<"FormSubmission", 'String'>
   readonly message: Prisma.FieldRef<"FormSubmission", 'String'>
   readonly consent: Prisma.FieldRef<"FormSubmission", 'Boolean'>
+  readonly status: Prisma.FieldRef<"FormSubmission", 'SubmissionStatus'>
+  readonly managerComment: Prisma.FieldRef<"FormSubmission", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"FormSubmission", 'DateTime'>
   readonly files: Prisma.FieldRef<"FormSubmission", 'Json'>
   readonly createdAt: Prisma.FieldRef<"FormSubmission", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"FormSubmission", 'DateTime'>

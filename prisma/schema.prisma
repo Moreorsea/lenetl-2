@@ -8,6 +8,13 @@ datasource db {
   provider = "mysql"
 }
 
+enum SubmissionStatus {
+  NEW
+  WAITING_CLARIFICATION
+  PROCESSED
+  CLOSED
+}
+
 model FormSubmission {
   id          Int              @id @default(autoincrement())
   name        String           // Имя, фамилия (обязательное)
@@ -15,10 +22,35 @@ model FormSubmission {
   email       String           // Email (обязательный)
   message     String           // Сообщение или вопрос (обязательное)
   consent     Boolean          // Согласие на обработку ПД (обязательное)
+  status      SubmissionStatus @default(NEW)
+  managerComment String?          @db.Text
+  deletedAt   DateTime?
   files       Json?            // Legacy: старые заявки до SubmissionFile
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   attachments SubmissionFile[]
+
+  @@index([deletedAt])
+  @@index([status])
+}
+
+model SubmissionHistory {
+  id                   Int              @id @default(autoincrement())
+  originalSubmissionId Int
+  name                 String
+  phone                String
+  email                String
+  message              String
+  consent              Boolean
+  status               SubmissionStatus
+  managerComment       String?          @db.Text
+  filesCount           Int              @default(0)
+  submittedAt          DateTime
+  deletedAt            DateTime
+  archivedAt           DateTime         @default(now())
+
+  @@index([archivedAt])
+  @@index([originalSubmissionId])
 }
 
 model SubmissionFile {

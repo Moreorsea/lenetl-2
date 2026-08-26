@@ -1,3 +1,5 @@
+import type { SubmissionStatus } from './submissionStatus'
+
 export type SubmissionFile = {
   id?: number
   originalName: string
@@ -16,6 +18,9 @@ export type Submission = {
   email: string
   message: string
   consent: boolean
+  status: SubmissionStatus
+  managerComment: string | null
+  deletedAt: string | null
   files: SubmissionFile[] | null
   createdAt: string
   updatedAt: string

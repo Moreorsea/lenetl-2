@@ -9,7 +9,11 @@
 * 🟢 You can import this file directly.
 */
 
+export const SubmissionStatus = {
+  NEW: 'NEW',
+  WAITING_CLARIFICATION: 'WAITING_CLARIFICATION',
+  PROCESSED: 'PROCESSED',
+  CLOSED: 'CLOSED'
+} as const
 
-
-// This file is empty because there are no enums in the schema.
-export {}
+export type SubmissionStatus = (typeof SubmissionStatus)[keyof typeof SubmissionStatus]

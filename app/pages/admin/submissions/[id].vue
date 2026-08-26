@@ -1,10 +1,10 @@
 <template>
   <div class="submission-detail">
     <NuxtLink
-      to="/admin/submissions"
+      :to="backLink"
       class="submission-detail__back">
       <i class="fas fa-arrow-left"></i>
-      К списку заявок
+      {{ backLabel }}
     </NuxtLink>
 
     <div
@@ -20,9 +20,25 @@
     </div>
 
     <template v-else>
+      <p
+        v-if="submission.deletedAt"
+        class="submission-detail__deleted-banner">
+        Заявка удалена {{ formatSubmissionDate(submission.deletedAt) }}
+      </p>
+
       <header class="submission-detail__header">
-        <h1>Заявка № {{ submission.id }}</h1>
-        <p>от {{ formatSubmissionDate(submission.createdAt) }}</p>
+        <div class="submission-detail__header-main">
+          <h1>Заявка № {{ submission.id }}</h1>
+          <p>от {{ formatSubmissionDate(submission.createdAt) }}</p>
+        </div>
+        <SubmissionStatusSelect
+          v-if="!submission.deletedAt"
+          :model-value="submission.status"
+          :saving="isSaving(submission.id)"
+          @update:model-value="changeStatus" />
+        <SubmissionStatusBadge
+          v-else
+          :status="submission.status" />
       </header>
 
       <div class="submission-detail__grid">
@@ -57,6 +73,51 @@
           <p class="submission-detail__message">{{ submission.message }}</p>
         </section>
       </div>
+
+      <section class="submission-detail__card">
+        <div class="submission-detail__comment-header">
+          <h2>Комментарий менеджера</h2>
+          <span
+            v-if="commentSavedFlash"
+            class="submission-detail__comment-saved">
+            Сохранено
+          </span>
+        </div>
+
+        <template v-if="submission.deletedAt">
+          <p
+            v-if="submission.managerComment"
+            class="submission-detail__message">
+            {{ submission.managerComment }}
+          </p>
+          <p
+            v-else
+            class="submission-detail__empty">
+            Комментарий не указан
+          </p>
+        </template>
+
+        <template v-else>
+          <textarea
+            v-model="managerCommentDraft"
+            class="submission-detail__comment-input"
+            rows="5"
+            placeholder="Внутренний комментарий по заявке..."
+            :disabled="isSaving(submission.id)" />
+          <div class="submission-detail__comment-actions">
+            <button
+              type="button"
+              class="submission-detail__comment-save"
+              :disabled="!commentDirty || isSaving(submission.id)"
+              @click="saveManagerComment">
+              <i
+                v-if="isSaving(submission.id)"
+                class="fas fa-spinner fa-spin" />
+              {{ isSaving(submission.id) ? 'Сохранение...' : 'Сохранить комментарий' }}
+            </button>
+          </div>
+        </template>
+      </section>
 
       <section class="submission-detail__card">
         <h2>
@@ -137,6 +198,7 @@ import {
   parseSubmissionFiles,
   type Submission,
 } from '#shared/types/submission'
+import type { SubmissionStatus } from '#shared/types/submissionStatus'
 
 definePageMeta({
   layout: 'admin',
@@ -153,6 +215,71 @@ const { data, pending, error } = await useFetch<{ success: boolean; data: Submis
 
 const submission = computed(() => data.value?.data ?? null)
 const files = computed(() => parseSubmissionFiles(submission.value?.files ?? null))
+const { isSaving, updateSubmissionStatus, updateManagerComment } = useSubmissionStatusUpdate()
+
+const managerCommentDraft = ref('')
+const commentSavedFlash = ref(false)
+let commentFlashTimer: ReturnType<typeof setTimeout> | undefined
+
+watch(
+  submission,
+  (value) => {
+    managerCommentDraft.value = value?.managerComment ?? ''
+  },
+  { immediate: true },
+)
+
+const commentDirty = computed(() => {
+  const current = submission.value?.managerComment ?? ''
+  return managerCommentDraft.value.trim() !== current.trim()
+})
+
+const backLink = computed(() =>
+  submission.value?.deletedAt ? '/admin/submissions/deleted' : '/admin/submissions',
+)
+
+const backLabel = computed(() =>
+  submission.value?.deletedAt ? 'К удалённым' : 'К списку заявок',
+)
+
+const changeStatus = async (status: SubmissionStatus) => {
+  if (!submission.value) return
+
+  const updated = await updateSubmissionStatus(submission.value.id, status)
+
+  if (!data.value) return
+
+  data.value = {
+    ...data.value,
+    data: updated,
+  }
+}
+
+const saveManagerComment = async () => {
+  if (!submission.value || !commentDirty.value) return
+
+  const updated = await updateManagerComment(
+    submission.value.id,
+    managerCommentDraft.value.trim() || null,
+  )
+
+  if (!data.value) return
+
+  data.value = {
+    ...data.value,
+    data: updated,
+  }
+
+  commentSavedFlash.value = true
+  if (commentFlashTimer) clearTimeout(commentFlashTimer)
+  commentFlashTimer = setTimeout(() => {
+    commentSavedFlash.value = false
+  }, 2000)
+}
+
+onUnmounted(() => {
+  if (commentFlashTimer) clearTimeout(commentFlashTimer)
+})
 
 const errorMessage = computed(() => {
   if (error.value) {
@@ -165,6 +292,24 @@ const errorMessage = computed(() => {
 
 <style lang="scss" scoped>
 .submission-detail {
+  > .submission-detail__card {
+    margin-bottom: 20px;
+
+    @media (max-width: 768px) {
+      margin-bottom: 12px;
+    }
+  }
+
+  &__deleted-banner {
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    background: rgba(198, 40, 40, 0.06);
+    border: 1px solid rgba(198, 40, 40, 0.18);
+    color: #c62828;
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+
   &__back {
     display: inline-flex;
     align-items: center;
@@ -187,8 +332,20 @@ const errorMessage = computed(() => {
   }
 
   &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
     margin-bottom: 24px;
 
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+      margin-bottom: 16px;
+    }
+  }
+
+  &__header-main {
     h1 {
       margin: 0 0 6px;
       font-size: 1.75rem;
@@ -202,8 +359,6 @@ const errorMessage = computed(() => {
     }
 
     @media (max-width: 768px) {
-      margin-bottom: 16px;
-
       h1 {
         font-size: 1.35rem;
       }
@@ -325,6 +480,85 @@ const errorMessage = computed(() => {
     word-break: break-word;
     line-height: 1.6;
     color: var(--lenet-text-muted);
+  }
+
+  &__comment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  &__comment-saved {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2e7d32;
+  }
+
+  &__comment-input {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px 14px;
+    border: 1px solid rgba(13, 27, 42, 0.12);
+    border-radius: 8px;
+    background: #f5f7f9;
+    color: var(--lenet-body-text);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    resize: vertical;
+    font-family: inherit;
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: var(--lenet-accent);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.18);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+  }
+
+  &__comment-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  &__comment-save {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: var(--lenet-accent);
+    color: #1a1a1a;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.2s ease, opacity 0.2s ease;
+
+    &:hover:not(:disabled) {
+      filter: brightness(0.96);
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
   }
 
   &__empty {

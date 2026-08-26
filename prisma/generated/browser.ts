@@ -23,6 +23,11 @@ export * from './enums.js';
  */
 export type FormSubmission = Prisma.FormSubmissionModel
 /**
+ * Model SubmissionHistory
+ * 
+ */
+export type SubmissionHistory = Prisma.SubmissionHistoryModel
+/**
  * Model SubmissionFile
  * 
  */

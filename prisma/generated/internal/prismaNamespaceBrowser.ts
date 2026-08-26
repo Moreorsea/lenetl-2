@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   FormSubmission: 'FormSubmission',
+  SubmissionHistory: 'SubmissionHistory',
   SubmissionFile: 'SubmissionFile'
 } as const
 
@@ -78,12 +79,34 @@ export const FormSubmissionScalarFieldEnum = {
   email: 'email',
   message: 'message',
   consent: 'consent',
+  status: 'status',
+  managerComment: 'managerComment',
+  deletedAt: 'deletedAt',
   files: 'files',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type FormSubmissionScalarFieldEnum = (typeof FormSubmissionScalarFieldEnum)[keyof typeof FormSubmissionScalarFieldEnum]
+
+
+export const SubmissionHistoryScalarFieldEnum = {
+  id: 'id',
+  originalSubmissionId: 'originalSubmissionId',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  message: 'message',
+  consent: 'consent',
+  status: 'status',
+  managerComment: 'managerComment',
+  filesCount: 'filesCount',
+  submittedAt: 'submittedAt',
+  deletedAt: 'deletedAt',
+  archivedAt: 'archivedAt'
+} as const
+
+export type SubmissionHistoryScalarFieldEnum = (typeof SubmissionHistoryScalarFieldEnum)[keyof typeof SubmissionHistoryScalarFieldEnum]
 
 
 export const SubmissionFileScalarFieldEnum = {
@@ -145,10 +168,22 @@ export const FormSubmissionOrderByRelevanceFieldEnum = {
   name: 'name',
   phone: 'phone',
   email: 'email',
-  message: 'message'
+  message: 'message',
+  managerComment: 'managerComment'
 } as const
 
 export type FormSubmissionOrderByRelevanceFieldEnum = (typeof FormSubmissionOrderByRelevanceFieldEnum)[keyof typeof FormSubmissionOrderByRelevanceFieldEnum]
+
+
+export const SubmissionHistoryOrderByRelevanceFieldEnum = {
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  message: 'message',
+  managerComment: 'managerComment'
+} as const
+
+export type SubmissionHistoryOrderByRelevanceFieldEnum = (typeof SubmissionHistoryOrderByRelevanceFieldEnum)[keyof typeof SubmissionHistoryOrderByRelevanceFieldEnum]
 
 
 export const SubmissionFileOrderByRelevanceFieldEnum = {
