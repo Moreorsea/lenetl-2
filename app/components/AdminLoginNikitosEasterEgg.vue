@@ -140,7 +140,7 @@ const figureStyle = (figure: FigurePlacement) => ({
     object-position: center bottom;
     animation: nikitos-blink 2.2s ease-in-out infinite;
     animation-delay: var(--nikitos-delay, 0s);
-    filter: brightness(0);
+    filter: drop-shadow(0 8px 18px rgba(13, 27, 42, 0.22));
 
     &--left {
       left: 0;
@@ -213,12 +213,12 @@ const figureStyle = (figure: FigurePlacement) => ({
   0%,
   100% {
     opacity: 1;
-    filter: brightness(0);
+    filter: drop-shadow(0 8px 18px rgba(13, 27, 42, 0.22)) brightness(1);
   }
 
   50% {
-    opacity: 0.2;
-    filter: brightness(0);
+    opacity: 0.35;
+    filter: drop-shadow(0 8px 18px rgba(13, 27, 42, 0.12)) brightness(1.08);
   }
 }
 
