@@ -8,7 +8,9 @@
         :src="heroImage"
         alt="Лес и опоры ЛЭП"
         width="1920"
-        height="1080" />
+        height="1080"
+        fetchpriority="high"
+        decoding="async" />
       <div
         class="hero__gradient"
         aria-hidden="true" />
@@ -69,6 +71,18 @@ import heroImage from '~/assets/images/hero-forest-pylons.avif'
 
 const heroReady = ref(false)
 
+useHead({
+  link: [
+    {
+      rel: 'preload',
+      as: 'image',
+      href: heroImage,
+      type: 'image/avif',
+      fetchpriority: 'high',
+    } as Record<string, string>,
+  ],
+})
+
 onMounted(() => {
   requestAnimationFrame(() => {
     heroReady.value = true
@@ -109,7 +123,8 @@ onMounted(() => {
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background: #0d1b2a;
+  /* Близко к тону фото, чтобы не мигал синий */
+  background: #24352c;
   display: flex;
   align-items: flex-end;
 }
@@ -122,11 +137,8 @@ onMounted(() => {
   height: 100%;
   object-fit: cover;
   object-position: center center;
-  opacity: 0;
-  transform: scale(1.04);
-  transition:
-    opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 1;
+  transform: none;
 }
 
 .hero__gradient {
@@ -184,11 +196,6 @@ onMounted(() => {
 }
 
 .hero--ready {
-  .hero__photo {
-    opacity: 1;
-    transform: scale(1);
-  }
-
   .hero__brand,
   .hero__slogan,
   .hero__lead,

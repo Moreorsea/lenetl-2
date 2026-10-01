@@ -5,6 +5,17 @@ export default defineNuxtConfig({
   modules: ['@nuxt/image'],
   app: {
     head: {
+      htmlAttrs: {
+        lang: 'ru',
+      },
+      title: 'ЛенЭТЛ — электролаборатория до 10 кВ',
+      meta: [
+        {
+          name: 'description',
+          content:
+            'Лицензированная электролаборатория ЛенЭТЛ до 10 кВ: испытания и измерения электроустановок и средств защиты, протоколы, выезд по Санкт-Петербургу и Ленобласти.',
+        },
+      ],
       link: [
         {
           rel: 'icon',
