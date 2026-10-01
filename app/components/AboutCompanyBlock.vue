@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import aboutImage from '~/assets/images/about-map-vyborgskaya.png';
+import aboutImage from '~/assets/images/about-map-vyborgskaya.avif';
 import licenseImage from '~/assets/images/license.jpg';
 
 const points = [
