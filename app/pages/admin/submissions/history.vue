@@ -1,8 +1,11 @@
 <template>
   <div class="history-page">
     <header class="history-page__header">
-      <h1>История заявок</h1>
-      <p>Общие сведения по заявкам, удалённым навсегда</p>
+      <div class="history-page__header-main">
+        <h1>История заявок</h1>
+        <p>Общие сведения по заявкам, удалённым навсегда</p>
+      </div>
+      <SubmissionStatusFilter v-model="statusFilter" />
     </header>
 
     <div
@@ -20,7 +23,7 @@
     <div
       v-else-if="!items.length"
       class="history-page__state">
-      История пока пуста
+      {{ statusFilter ? 'Нет записей с выбранным статусом' : 'История пока пуста' }}
     </div>
 
     <div
@@ -100,6 +103,8 @@
 <script lang="ts" setup>
 import { formatSubmissionDate } from '#shared/types/submission'
 import type { SubmissionHistoryItem } from '#shared/types/submissionHistory'
+import type { SubmissionStatus } from '#shared/types/submissionStatus'
+import SubmissionStatusFilter from '~/components/SubmissionStatusFilter.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -107,10 +112,19 @@ definePageMeta({
   pageTransition: false,
 })
 
+const statusFilter = ref<SubmissionStatus | null>(null)
+
+const apiUrl = computed(() => {
+  const params = new URLSearchParams()
+  if (statusFilter.value) params.set('status', statusFilter.value)
+  const query = params.toString()
+  return query ? `/api/admin/submissions/history?${query}` : '/api/admin/submissions/history'
+})
+
 const { data, pending, error } = await useFetch<{
   success: boolean
   data: SubmissionHistoryItem[]
-}>('/api/admin/submissions/history')
+}>(apiUrl, { watch: [apiUrl] })
 
 const items = computed(() => data.value?.data ?? [])
 </script>
@@ -118,8 +132,19 @@ const items = computed(() => data.value?.data ?? [])
 <style lang="scss" scoped>
 .history-page {
   &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
     margin-bottom: 24px;
 
+    @media (max-width: 768px) {
+      flex-direction: column;
+      margin-bottom: 16px;
+    }
+  }
+
+  &__header-main {
     h1 {
       margin: 0 0 6px;
       font-size: 1.75rem;
@@ -133,8 +158,6 @@ const items = computed(() => data.value?.data ?? [])
     }
 
     @media (max-width: 768px) {
-      margin-bottom: 16px;
-
       h1 {
         font-size: 1.35rem;
       }

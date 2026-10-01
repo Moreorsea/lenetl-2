@@ -88,6 +88,52 @@ export function notifyNewSubmission(payload: NewSubmissionMailPayload): void {
   })
 }
 
+export async function sendAdminPasswordResetEmail(code: string): Promise<void> {
+  const { host, port, user, pass, from, to } = getMailConfig()
+
+  if (!host || !user || !pass || !from) {
+    throw createError({
+      statusCode: 500,
+      message: 'Почта не настроена. Не удалось отправить код сброса.',
+    })
+  }
+
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: { user, pass },
+  })
+
+  const subject = 'Сброс пароля админки — ЛенЭТЛ'
+  const text = [
+    'Запрошен сброс пароля для админ-панели ЛенЭТЛ.',
+    '',
+    `Код подтверждения: ${code}`,
+    '',
+    'Код действует 15 минут.',
+    'Если вы не запрашивали сброс, просто проигнорируйте это письмо.',
+  ].join('\n')
+
+  const html = `
+    <div style="font-family:Segoe UI,Arial,sans-serif;line-height:1.5;color:#0d1b2a">
+      <h2 style="margin:0 0 12px">Сброс пароля админки</h2>
+      <p style="margin:0 0 16px">Запрошен сброс пароля для панели управления ЛенЭТЛ.</p>
+      <p style="margin:0 0 8px;color:#546e7a">Код подтверждения</p>
+      <p style="margin:0;font-size:28px;font-weight:700;letter-spacing:0.12em">${escapeHtml(code)}</p>
+      <p style="margin:16px 0 0;color:#546e7a">Код действует 15 минут. Если вы не запрашивали сброс, проигнорируйте письмо.</p>
+    </div>
+  `
+
+  await transporter.sendMail({
+    from,
+    to,
+    subject,
+    text,
+    html,
+  })
+}
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll('&', '&amp;')

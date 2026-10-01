@@ -16,9 +16,19 @@
       class="admin-login__card"
       :class="{ 'admin-login__card--loading': isLoading }"
       :aria-busy="isLoading"
-      @submit.prevent="handleLogin">
-      <h1 class="admin-login__title">Вход в админку</h1>
-      <p class="admin-login__subtitle">ЛенЭТЛ — панель управления</p>
+      @submit.prevent="handleSubmit">
+      <h1 class="admin-login__title">
+        {{ mode === 'login' ? 'Вход в админку' : 'Сброс пароля' }}
+      </h1>
+      <p class="admin-login__subtitle">
+        {{
+          mode === 'login'
+            ? 'ЛенЭТЛ — панель управления'
+            : resetStep === 'request'
+              ? 'Отправим код подтверждения на почту администратора'
+              : 'Введите код из письма и новый пароль'
+        }}
+      </p>
 
       <label class="admin-login__field">
         <span>Логин</span>
@@ -26,37 +36,97 @@
           v-model="login"
           type="text"
           autocomplete="username"
-          :disabled="isLoading"
+          :disabled="isLoading || (mode === 'reset' && resetStep === 'confirm')"
           required />
       </label>
 
-      <div class="admin-login__field">
-        <label
-          class="admin-login__label"
-          for="admin-password">
-          Пароль
-        </label>
-        <div class="admin-login__password">
-          <input
-            id="admin-password"
-            v-model="password"
-            :type="isPasswordVisible ? 'text' : 'password'"
-            autocomplete="current-password"
-            :disabled="isLoading"
-            required
-            @keydown.enter.prevent="handleLogin" />
-          <button
-            type="button"
-            class="admin-login__password-toggle"
-            :disabled="isLoading"
-            :aria-label="isPasswordVisible ? 'Скрыть пароль' : 'Показать пароль'"
-            @click="isPasswordVisible = !isPasswordVisible">
-            <i
-              class="fas"
-              :class="isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'" />
-          </button>
+      <template v-if="mode === 'login'">
+        <div class="admin-login__field">
+          <label
+            class="admin-login__label"
+            for="admin-password">
+            Пароль
+          </label>
+          <div class="admin-login__password">
+            <input
+              id="admin-password"
+              v-model="password"
+              :type="isPasswordVisible ? 'text' : 'password'"
+              autocomplete="current-password"
+              :disabled="isLoading"
+              required />
+            <button
+              type="button"
+              class="admin-login__password-toggle"
+              :disabled="isLoading"
+              :aria-label="isPasswordVisible ? 'Скрыть пароль' : 'Показать пароль'"
+              @click="isPasswordVisible = !isPasswordVisible">
+              <i
+                class="fas"
+                :class="isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'" />
+            </button>
+          </div>
         </div>
-      </div>
+      </template>
+
+      <template v-else-if="resetStep === 'confirm'">
+        <label class="admin-login__field">
+          <span>Код из письма</span>
+          <input
+            v-model="resetCode"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            :disabled="isLoading"
+            required />
+        </label>
+
+        <div class="admin-login__field">
+          <label
+            class="admin-login__label"
+            for="admin-new-password">
+            Новый пароль
+          </label>
+          <div class="admin-login__password">
+            <input
+              id="admin-new-password"
+              v-model="newPassword"
+              :type="isPasswordVisible ? 'text' : 'password'"
+              autocomplete="new-password"
+              :disabled="isLoading"
+              minlength="6"
+              required />
+            <button
+              type="button"
+              class="admin-login__password-toggle"
+              :disabled="isLoading"
+              :aria-label="isPasswordVisible ? 'Скрыть пароль' : 'Показать пароль'"
+              @click="isPasswordVisible = !isPasswordVisible">
+              <i
+                class="fas"
+                :class="isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'" />
+            </button>
+          </div>
+        </div>
+
+        <label class="admin-login__field">
+          <span>Повторите пароль</span>
+          <input
+            v-model="confirmPassword"
+            :type="isPasswordVisible ? 'text' : 'password'"
+            autocomplete="new-password"
+            :disabled="isLoading"
+            minlength="6"
+            required />
+        </label>
+      </template>
+
+      <p
+        v-if="successMessage"
+        class="admin-login__success">
+        {{ successMessage }}
+      </p>
 
       <p
         v-if="errorMessage"
@@ -74,8 +144,36 @@
           <i class="fas fa-spinner fa-spin" />
           {{ loadingMessage }}
         </span>
-        <span v-else>Войти</span>
+        <span v-else>{{ submitLabel }}</span>
       </button>
+
+      <div class="admin-login__switch">
+        <button
+          v-if="mode === 'login'"
+          type="button"
+          class="admin-login__link"
+          :disabled="isLoading"
+          @click="openReset">
+          Сбросить пароль
+        </button>
+        <template v-else>
+          <button
+            v-if="resetStep === 'confirm'"
+            type="button"
+            class="admin-login__link"
+            :disabled="isLoading"
+            @click="resendResetCode">
+            Отправить код ещё раз
+          </button>
+          <button
+            type="button"
+            class="admin-login__link"
+            :disabled="isLoading"
+            @click="backToLogin">
+            Вернуться ко входу
+          </button>
+        </template>
+      </div>
 
       <div
         v-if="isLoading"
@@ -96,10 +194,19 @@ definePageMeta({
   pageTransition: false,
 })
 
+type Mode = 'login' | 'reset'
+type ResetStep = 'request' | 'confirm'
+
+const mode = ref<Mode>('login')
+const resetStep = ref<ResetStep>('request')
 const login = ref('')
 const password = ref('')
+const resetCode = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
 const isPasswordVisible = ref(false)
 const errorMessage = ref('')
+const successMessage = ref('')
 const isLoading = ref(false)
 const loadingMessage = ref('Проверяем данные...')
 const failedAttempts = ref(0)
@@ -117,6 +224,12 @@ try {
 }
 
 let nikitosHideTimer: ReturnType<typeof setTimeout> | undefined
+
+const submitLabel = computed(() => {
+  if (mode.value === 'login') return 'Войти'
+  if (resetStep.value === 'request') return 'Отправить код'
+  return 'Сохранить пароль'
+})
 
 const triggerNikitosEasterEgg = () => {
   nikitosSessionKey.value += 1
@@ -137,35 +250,132 @@ onUnmounted(() => {
   }
 })
 
-const handleLogin = async () => {
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error && typeof error === 'object' && 'data' in error) {
+    const data = (error as { data?: { message?: string } }).data
+    return data?.message ?? fallback
+  }
+  return fallback
+}
+
+const openReset = () => {
+  mode.value = 'reset'
+  resetStep.value = 'request'
+  errorMessage.value = ''
+  successMessage.value = ''
+  password.value = ''
+  resetCode.value = ''
+  newPassword.value = ''
+  confirmPassword.value = ''
+}
+
+const backToLogin = () => {
+  mode.value = 'login'
+  resetStep.value = 'request'
+  errorMessage.value = ''
+  successMessage.value = ''
+  resetCode.value = ''
+  newPassword.value = ''
+  confirmPassword.value = ''
+}
+
+const requestResetCode = async () => {
+  loadingMessage.value = 'Отправляем код...'
+  await $fetch('/api/admin/password-reset/request', {
+    method: 'POST',
+    body: { login: login.value.trim() },
+  })
+  resetStep.value = 'confirm'
+  successMessage.value = 'Код отправлен на почту администратора'
+  errorMessage.value = ''
+}
+
+const resendResetCode = async () => {
   if (isLoading.value) return
 
   errorMessage.value = ''
-  loadingMessage.value = 'Проверяем данные...'
+  successMessage.value = ''
+  loadingMessage.value = 'Отправляем код...'
   isLoading.value = true
 
   try {
-    await $fetch('/api/admin/login', {
-      method: 'POST',
-      body: {
-        login: login.value.trim(),
-        password: password.value,
-      },
-    })
-    loadingMessage.value = 'Вход выполнен, перенаправляем...'
-    await navigateTo('/admin/submissions')
+    await requestResetCode()
   } catch (error: unknown) {
-    failedAttempts.value += 1
+    errorMessage.value = getErrorMessage(error, 'Не удалось отправить код')
+  } finally {
+    isLoading.value = false
+  }
+}
 
-    if (failedAttempts.value >= 3) {
-      triggerNikitosEasterEgg()
+const handleLogin = async () => {
+  loadingMessage.value = 'Проверяем данные...'
+
+  await $fetch('/api/admin/login', {
+    method: 'POST',
+    body: {
+      login: login.value.trim(),
+      password: password.value,
+    },
+  })
+
+  loadingMessage.value = 'Вход выполнен, перенаправляем...'
+  await navigateTo('/admin/submissions')
+}
+
+const handleConfirmReset = async () => {
+  loadingMessage.value = 'Сохраняем новый пароль...'
+
+  await $fetch('/api/admin/password-reset/confirm', {
+    method: 'POST',
+    body: {
+      login: login.value.trim(),
+      code: resetCode.value.trim(),
+      newPassword: newPassword.value,
+      confirmPassword: confirmPassword.value,
+    },
+  })
+
+  password.value = ''
+  resetCode.value = ''
+  newPassword.value = ''
+  confirmPassword.value = ''
+  mode.value = 'login'
+  resetStep.value = 'request'
+  successMessage.value = 'Пароль обновлён. Войдите с новым паролем.'
+  errorMessage.value = ''
+}
+
+const handleSubmit = async () => {
+  if (isLoading.value) return
+
+  errorMessage.value = ''
+  if (mode.value === 'login') {
+    successMessage.value = ''
+  }
+  isLoading.value = true
+
+  try {
+    if (mode.value === 'login') {
+      await handleLogin()
+      return
     }
 
-    if (error && typeof error === 'object' && 'data' in error) {
-      const data = (error as { data?: { message?: string } }).data
-      errorMessage.value = data?.message ?? 'Неверный логин или пароль'
+    if (resetStep.value === 'request') {
+      await requestResetCode()
     } else {
-      errorMessage.value = 'Не удалось выполнить вход'
+      await handleConfirmReset()
+    }
+
+    isLoading.value = false
+  } catch (error: unknown) {
+    if (mode.value === 'login') {
+      failedAttempts.value += 1
+      if (failedAttempts.value >= 3) {
+        triggerNikitosEasterEgg()
+      }
+      errorMessage.value = getErrorMessage(error, 'Неверный логин или пароль')
+    } else {
+      errorMessage.value = getErrorMessage(error, 'Не удалось сбросить пароль')
     }
     isLoading.value = false
   }
@@ -338,6 +548,16 @@ const handleLogin = async () => {
     border-radius: 6px;
   }
 
+  &__success {
+    margin: 0 0 16px;
+    padding: 10px 12px;
+    color: #1b5e20;
+    font-size: 0.9rem;
+    background: rgba(46, 125, 50, 0.08);
+    border: 1px solid rgba(46, 125, 50, 0.18);
+    border-radius: 6px;
+  }
+
   &__submit {
     width: 100%;
     padding: 12px;
@@ -361,6 +581,36 @@ const handleLogin = async () => {
     &:disabled {
       opacity: 0.85;
       cursor: wait;
+    }
+  }
+
+  &__switch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  &__link {
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--lenet-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+
+    &:hover:not(:disabled) {
+      color: var(--lenet-body-text);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 

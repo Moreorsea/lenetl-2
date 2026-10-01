@@ -32,8 +32,34 @@
       <table class="submissions-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Дата</th>
+            <th>
+              <button
+                type="button"
+                class="submissions-table__sort"
+                :class="{ 'submissions-table__sort--active': sortKey === 'id' }"
+                :aria-label="sortKey === 'id' && sortDir === 'asc' ? 'Сортировка: по возрастанию ID' : 'Сортировка: по убыванию ID'"
+                @click="setSort('id')">
+                ID
+                <i
+                  class="fas"
+                  :class="sortKey === 'id' && sortDir === 'asc' ? 'fa-sort-up' : 'fa-sort-down'"
+                  aria-hidden="true" />
+              </button>
+            </th>
+            <th>
+              <button
+                type="button"
+                class="submissions-table__sort"
+                :class="{ 'submissions-table__sort--active': sortKey === 'createdAt' }"
+                :aria-label="sortKey === 'createdAt' && sortDir === 'desc' ? 'Сортировка: сначала новые' : 'Сортировка: сначала старые'"
+                @click="setSort('createdAt')">
+                Дата
+                <i
+                  class="fas"
+                  :class="sortKey === 'createdAt' && sortDir === 'asc' ? 'fa-sort-up' : 'fa-sort-down'"
+                  aria-hidden="true" />
+              </button>
+            </th>
             <th v-if="deleted">Удалена</th>
             <th>Статус</th>
             <th>Имя</th>
@@ -185,6 +211,7 @@ import {
   type Submission,
 } from '#shared/types/submission'
 import type { SubmissionStatus } from '#shared/types/submissionStatus'
+import SubmissionStatusFilter from '~/components/SubmissionStatusFilter.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -202,6 +229,8 @@ const props = withDefaults(
 )
 
 const statusFilter = ref<SubmissionStatus | null>(null)
+const sortKey = ref<'id' | 'createdAt'>('createdAt')
+const sortDir = ref<'asc' | 'desc'>('desc')
 
 const apiUrl = computed(() => {
   const params = new URLSearchParams()
@@ -216,7 +245,30 @@ const { data, pending, error } = await useFetch<{ success: boolean; data: Submis
   { watch: [apiUrl] },
 )
 
-const submissions = computed(() => data.value?.data ?? [])
+const submissions = computed(() => {
+  const items = [...(data.value?.data ?? [])]
+  const direction = sortDir.value === 'asc' ? 1 : -1
+
+  return items.sort((a, b) => {
+    if (sortKey.value === 'id') {
+      return (Number(a.id) - Number(b.id)) * direction
+    }
+
+    const aTime = new Date(a.createdAt).getTime()
+    const bTime = new Date(b.createdAt).getTime()
+    return (aTime - bTime) * direction
+  })
+})
+
+const setSort = (key: 'id' | 'createdAt') => {
+  if (sortKey.value === key) {
+    sortDir.value = sortDir.value === 'desc' ? 'asc' : 'desc'
+    return
+  }
+
+  sortKey.value = key
+  sortDir.value = key === 'id' ? 'asc' : 'desc'
+}
 const { isDeleting, softDeleteSubmission, permanentlyDeleteSubmission } = useDeleteSubmission()
 
 const confirmOpen = ref(false)
@@ -366,6 +418,40 @@ const confirmPermanentDelete = async () => {
     letter-spacing: 0.03em;
     text-transform: uppercase;
     white-space: nowrap;
+  }
+
+  &__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    i {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 0.9em;
+      font-size: 0.85rem;
+      line-height: 1;
+      opacity: 0.35;
+    }
+
+    &--active,
+    &:hover {
+      color: var(--lenet-body-text);
+
+      i {
+        opacity: 1;
+      }
+    }
   }
 
   td {

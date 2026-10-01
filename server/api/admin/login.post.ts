@@ -1,5 +1,4 @@
 import {
-  clearAdminSessionCookie,
   createAdminSession,
   setAdminSessionCookie,
   verifyAdminCredentials,
@@ -15,7 +14,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Укажите логин и пароль' })
   }
 
-  if (!verifyAdminCredentials(login, password)) {
+  if (!(await verifyAdminCredentials(login, password))) {
     throw createError({ statusCode: 401, message: 'Неверный логин или пароль' })
   }
 
