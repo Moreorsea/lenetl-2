@@ -99,7 +99,7 @@
 </template>
 
 <script lang="ts" setup>
-import heroImage from '~/assets/images/hero-forest-pylons.jpg'
+import heroImage from '~/assets/images/hero-forest-pylons.avif'
 import servicePhaseZero from '~/assets/images/services/service-phase-zero.webp'
 import serviceUzo from '~/assets/images/services/service-uzo.webp'
 import serviceBreaker from '~/assets/images/services/service-breaker.webp'
