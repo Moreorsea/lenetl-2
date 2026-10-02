@@ -1,16 +1,18 @@
 <template>
   <section
     class="hero"
-    :class="{ 'hero--ready': heroReady }">
+    :class="{ 'hero--ready': heroReady, 'hero--photo-ready': heroPhotoReady }">
     <div class="hero__media">
       <img
+        ref="heroPhotoRef"
         class="hero__photo"
         :src="heroImage"
         alt="Лес и опоры ЛЭП"
         width="1920"
         height="1080"
         fetchpriority="high"
-        decoding="async" />
+        decoding="async"
+        @load="heroPhotoReady = true" />
       <div
         class="hero__gradient"
         aria-hidden="true" />
@@ -70,6 +72,8 @@
 import heroImage from '~/assets/images/hero-forest-pylons.avif'
 
 const heroReady = ref(false)
+const heroPhotoReady = ref(false)
+const heroPhotoRef = ref<HTMLImageElement | null>(null)
 
 useHead({
   link: [
@@ -84,6 +88,10 @@ useHead({
 })
 
 onMounted(() => {
+  if (heroPhotoRef.value?.complete && heroPhotoRef.value.naturalWidth > 0) {
+    heroPhotoReady.value = true
+  }
+
   requestAnimationFrame(() => {
     heroReady.value = true
   })
@@ -137,8 +145,16 @@ onMounted(() => {
   height: 100%;
   object-fit: cover;
   object-position: center center;
+  opacity: 0;
+  transform: scale(1.04);
+  transition:
+    opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero--photo-ready .hero__photo {
   opacity: 1;
-  transform: none;
+  transform: scale(1);
 }
 
 .hero__gradient {
