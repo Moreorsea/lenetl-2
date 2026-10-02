@@ -150,11 +150,21 @@ onMounted(() => {
   transition:
     opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
     transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
 .hero--photo-ready .hero__photo {
   opacity: 1;
   transform: scale(1);
+  transition:
+    opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero--photo-ready .hero__media:hover .hero__photo {
+    transform: scale(1.06);
+  }
 }
 
 .hero__gradient {
@@ -350,6 +360,10 @@ onMounted(() => {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
+  }
+
+  .hero--photo-ready .hero__media:hover .hero__photo {
+    transform: none;
   }
 }
 </style>
